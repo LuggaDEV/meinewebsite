@@ -1,0 +1,35 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-heading: 'Playfair Display', Georgia, serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --color-cream: #faf8f5;
+  --color-terracotta: #c4704a;
+  --color-forest: #2d4a3e;
+  --color-warm-gray: #6b5b52;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+section {
+  scroll-margin-top: 5rem;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  background-color: var(--color-cream);
+  color: var(--color-forest);
+}
+
+#app {
+  min-height: 100vh;
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+}
