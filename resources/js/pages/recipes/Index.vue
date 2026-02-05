@@ -5,14 +5,10 @@ import HeroSection from '@/components/recipe/HeroSection.vue'
 import RecipesSection from '@/components/recipe/RecipesSection.vue'
 import AboutSection from '@/components/recipe/AboutSection.vue'
 import InstagramSection from '@/components/recipe/InstagramSection.vue'
+import type { Recipe } from '@/types/recipe'
 
 const props = defineProps<{
-    recipes: Array<{
-        id: number
-        title: string
-        description: string
-        image: string | null
-    }>
+    recipes: Recipe[]
     about: {
         id?: number
         title: string
