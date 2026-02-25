@@ -76,7 +76,7 @@ const hasActiveFilters = computed(() => {
 </script>
 
 <template>
-    <section id="equipment" class="py-12 md:py-16 lg:py-20 bg-[var(--color-cream)]">
+    <section id="equipment" class="py-12 md:py-16 lg:py-20 bg-[var(--color-cream)] dark:bg-background">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Search and Filter Header -->
             <Motion
@@ -89,13 +89,13 @@ const hasActiveFilters = computed(() => {
                     <div class="mb-6">
                         <Label for="search" class="sr-only">Equipment suchen</Label>
                         <div class="relative">
-                            <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--color-warm-gray)]" />
+                            <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--color-warm-gray)] dark:text-muted-foreground" />
                             <Input
                                 id="search"
                                 v-model="searchQuery"
                                 type="text"
                                 placeholder="Equipment suchen..."
-                                class="pl-10"
+                                class="pl-10 bg-background dark:bg-input/30 border-input dark:border-input text-foreground placeholder:text-muted-foreground"
                             />
                         </div>
                     </div>
@@ -103,13 +103,13 @@ const hasActiveFilters = computed(() => {
                     <!-- Category Filters -->
                     <div v-if="availableCategories.length > 0" class="space-y-3">
                         <div class="flex items-center justify-between">
-                            <h3 class="text-sm font-medium text-[var(--color-forest)]">
+                            <h3 class="text-sm font-medium text-[var(--color-forest)] dark:text-foreground">
                                 Kategorien
                             </h3>
                             <button
                                 v-if="hasActiveFilters"
                                 @click="clearAllFilters"
-                                class="text-sm text-[var(--color-terracotta)] hover:underline"
+                                class="text-sm text-[var(--color-terracotta)] hover:underline dark:text-[var(--color-terracotta)]"
                             >
                                 Alle Filter zurücksetzen
                             </button>
@@ -124,7 +124,7 @@ const hasActiveFilters = computed(() => {
                                 class="origin-center"
                             >
                                 <label
-                                    class="flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer select-none transition-all duration-200 ease-out border-[var(--color-forest)]/20 hover:border-[var(--color-forest)]/40 hover:scale-[1.02] active:scale-[0.97]"
+                                    class="flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer select-none transition-all duration-200 ease-out border-[var(--color-forest)]/20 hover:border-[var(--color-forest)]/40 dark:border-border dark:hover:border-muted-foreground/40 hover:scale-[1.02] active:scale-[0.97]"
                                     :class="{
                                         'bg-[var(--color-forest)] text-white border-[var(--color-forest)] shadow-sm': activeFilters.categories.includes(category),
                                         'bg-white dark:bg-input/30 dark:border-border': !activeFilters.categories.includes(category)
@@ -136,7 +136,7 @@ const hasActiveFilters = computed(() => {
                                         :checked="activeFilters.categories.includes(category)"
                                         class="hidden"
                                     />
-                                    <span class="text-sm font-medium">{{ category }}</span>
+                                    <span class="text-sm font-medium dark:text-foreground" :class="{ 'dark:!text-white': activeFilters.categories.includes(category) }">{{ category }}</span>
                                 </label>
                             </Motion>
                         </div>
@@ -162,19 +162,19 @@ const hasActiveFilters = computed(() => {
                 class="text-center py-12"
             >
                 <div class="max-w-md mx-auto">
-                    <svg class="w-16 h-16 mx-auto text-[var(--color-warm-gray)]/50 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-16 h-16 mx-auto text-[var(--color-warm-gray)]/50 dark:text-muted-foreground/50 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <h3 class="text-xl font-heading font-semibold text-[var(--color-forest)] mb-2">
+                    <h3 class="text-xl font-heading font-semibold text-[var(--color-forest)] dark:text-foreground mb-2">
                         Keine Ergebnisse gefunden
                     </h3>
-                    <p class="text-[var(--color-warm-gray)] mb-6">
+                    <p class="text-[var(--color-warm-gray)] dark:text-muted-foreground mb-6">
                         Versuche es mit einem anderen Suchbegriff oder passe deine Filter an.
                     </p>
                     <button
                         v-if="hasActiveFilters"
                         @click="clearAllFilters"
-                        class="px-6 py-2 bg-[var(--color-forest)] text-white rounded-lg hover:bg-[var(--color-terracotta)] transition-colors"
+                        class="px-6 py-2 bg-[var(--color-forest)] text-white rounded-lg hover:bg-[var(--color-terracotta)] dark:bg-[var(--color-forest)] dark:hover:bg-[var(--color-terracotta)] transition-colors"
                     >
                         Filter zurücksetzen
                     </button>
