@@ -14,32 +14,12 @@ class EquipmentController extends Controller
      */
     public function index(Request $request): Response
     {
-        $search = $request->query('search', '');
-        $categories = $request->query('categories', []);
-
-        $query = Equipment::query();
-
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
-            });
-        }
-
-        if (! empty($categories)) {
-            // Accept comma-separated string or array
-            if (is_string($categories)) {
-                $categories = array_filter(explode(',', $categories));
-            }
-            $query->whereIn('category', $categories);
-        }
-
-        $paginated = $query->orderBy('category')
+        $allEquipment = Equipment::query()
+            ->orderBy('category')
             ->orderBy('name')
-            ->paginate(12);
+            ->get();
 
-        // Transform images on the underlying collection
-        $paginated->getCollection()->transform(function ($item) {
+        $allEquipment->transform(function ($item) {
             if ($item->image && ! str_starts_with($item->image, 'http')) {
                 $item->image = asset('storage/'.$item->image);
             }
@@ -54,11 +34,7 @@ class EquipmentController extends Controller
             ->toArray();
 
         return Inertia::render('equipment/Index', [
-            'equipment' => $paginated,
-            'filters' => [
-                'search' => $search,
-                'categories' => is_array($categories) ? $categories : [],
-            ],
+            'equipment' => $allEquipment,
             'allCategories' => $allCategories,
         ]);
     }

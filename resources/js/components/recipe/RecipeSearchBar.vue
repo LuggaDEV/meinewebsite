@@ -39,22 +39,22 @@ function clearSearch() {
 
 <template>
     <div class="relative">
-        <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--color-warm-gray)]" />
+        <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--color-warm-gray)] dark:text-muted-foreground" />
         <Input
             v-model="localValue"
             type="text"
             placeholder="Suche nach Titel oder Beschreibung..."
-            class="pl-10 pr-10"
+            class="pl-10 pr-10 bg-background dark:bg-input/30 border-input dark:border-input text-foreground placeholder:text-muted-foreground"
             aria-label="Rezeptsuche"
         />
         <button
             v-if="localValue"
             type="button"
             @click="clearSearch"
-            class="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-[var(--color-forest)]/10 transition-colors"
+            class="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-[var(--color-forest)]/10 dark:hover:bg-accent transition-colors"
             aria-label="Suche löschen"
         >
-            <X class="w-4 h-4 text-[var(--color-warm-gray)]" />
+            <X class="w-4 h-4 text-[var(--color-warm-gray)] dark:text-muted-foreground" />
         </button>
     </div>
 </template>

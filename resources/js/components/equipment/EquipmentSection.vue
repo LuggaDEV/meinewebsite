@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from 'vue'
-import { router } from '@inertiajs/vue3'
+import { ref, computed } from 'vue'
 import { Motion } from 'motion-v'
 import { Search } from 'lucide-vue-next'
 import EquipmentCard from './EquipmentCard.vue'
@@ -11,24 +10,22 @@ import Checkbox from '@/components/ui/checkbox/Checkbox.vue'
 
 const props = defineProps<{
     equipment: any,
-    filters: { search: string, categories: string[] },
     allCategories: string[],
 }>()
 
-const searchQuery = ref<string>(props.filters?.search ?? '')
+const searchQuery = ref<string>('')
 const activeFilters = ref<ActiveFilters>({
-    categories: [...(props.filters?.categories ?? [])]
+    categories: []
 })
 
-// Sync local state when props change (e.g. Inertia visit, back/forward)
-let isSyncingFromProps = false
-watch(() => props.filters, (newFilters) => {
-    if (!newFilters) return
-    isSyncingFromProps = true
-    searchQuery.value = newFilters.search ?? ''
-    activeFilters.value.categories = Array.isArray(newFilters.categories) ? [...newFilters.categories] : []
-    nextTick(() => { isSyncingFromProps = false })
-}, { deep: true })
+// Full list from server (array)
+const allItems = computed(() => {
+    const eq = props.equipment
+    if (!eq) return []
+    if (Array.isArray(eq)) return eq
+    const data = eq.data ?? eq.items
+    return Array.isArray(data) ? data : []
+})
 
 // Extract unique categories from server-provided allCategories (safe default)
 const availableCategories = computed(() => {
@@ -37,29 +34,26 @@ const availableCategories = computed(() => {
     return list.slice().sort()
 })
 
-// Items from server (paginated) or raw array fallback (always return array)
+// Filtered items: client-side filter by search and categories (no page reload)
 const items = computed(() => {
-    const eq = props.equipment
-    if (!eq) return []
-    // Laravel paginator: serialized as { data: [...], current_page, ... }
-    const data = eq.data ?? eq.items
-    if (Array.isArray(data)) return data
-    if (Array.isArray(eq)) return eq
-    return []
+    let list = allItems.value
+    const q = searchQuery.value.trim().toLowerCase()
+    if (q) {
+        list = list.filter(
+            (item: { name?: string; description?: string | null }) =>
+                (item.name ?? '').toLowerCase().includes(q) ||
+                (item.description ?? '').toLowerCase().includes(q)
+        )
+    }
+    if (activeFilters.value.categories.length > 0) {
+        list = list.filter(
+            (item: { category?: string }) => activeFilters.value.categories.includes(item.category ?? '')
+        )
+    }
+    return list
 })
 
-let searchTimeout: ReturnType<typeof setTimeout> | null = null
-
-function submitFilters(): void {
-    if (isSyncingFromProps) return
-    const params: Record<string, string> = {}
-    if (searchQuery.value) params.search = searchQuery.value
-    if (activeFilters.value.categories.length > 0) params.categories = activeFilters.value.categories.join(',')
-
-    router.get('/equipment', params, { preserveScroll: true })
-}
-
-// Toggle category filter and submit to server
+// Toggle category filter (only local state, no request)
 function toggleCategory(category: string): void {
     const index = activeFilters.value.categories.indexOf(category)
     if (index === -1) {
@@ -67,24 +61,13 @@ function toggleCategory(category: string): void {
     } else {
         activeFilters.value.categories.splice(index, 1)
     }
-    submitFilters()
 }
 
-// Clear all filters and submit
+// Clear all filters (only local state, no request)
 function clearAllFilters(): void {
     activeFilters.value.categories = []
     searchQuery.value = ''
-    submitFilters()
 }
-
-// Watch search input and debounce submissions (only when user changes input, not when syncing from props)
-watch(searchQuery, () => {
-    if (isSyncingFromProps) return
-    if (searchTimeout) clearTimeout(searchTimeout)
-    searchTimeout = setTimeout(() => {
-        submitFilters()
-    }, 500)
-})
 
 // Check if any filters are active
 const hasActiveFilters = computed(() => {
@@ -132,23 +115,30 @@ const hasActiveFilters = computed(() => {
                             </button>
                         </div>
                         <div class="flex flex-wrap gap-3">
-                            <label
-                                v-for="category in availableCategories"
+                            <Motion
+                                v-for="(category, i) in availableCategories"
                                 :key="category"
-                                class="flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--color-forest)]/20 hover:border-[var(--color-forest)]/40 cursor-pointer transition-colors"
-                                :class="{
-                                    'bg-[var(--color-forest)] text-white border-[var(--color-forest)]': activeFilters.categories.includes(category),
-                                    'bg-white': !activeFilters.categories.includes(category)
-                                }"
-                                @click.prevent="toggleCategory(category)"
+                                :initial="{ opacity: 0, scale: 0.9 }"
+                                :animate="{ opacity: 1, scale: 1 }"
+                                :transition="{ duration: 0.25, delay: i * 0.03, ease: 'easeOut' }"
+                                class="origin-center"
                             >
-                                <Checkbox
-                                    :id="`category-${category}`"
-                                    :checked="activeFilters.categories.includes(category)"
-                                    class="hidden"
-                                />
-                                <span class="text-sm font-medium">{{ category }}</span>
-                            </label>
+                                <label
+                                    class="flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer select-none transition-all duration-200 ease-out border-[var(--color-forest)]/20 hover:border-[var(--color-forest)]/40 hover:scale-[1.02] active:scale-[0.97]"
+                                    :class="{
+                                        'bg-[var(--color-forest)] text-white border-[var(--color-forest)] shadow-sm': activeFilters.categories.includes(category),
+                                        'bg-white dark:bg-input/30 dark:border-border': !activeFilters.categories.includes(category)
+                                    }"
+                                    @click.prevent="toggleCategory(category)"
+                                >
+                                    <Checkbox
+                                        :id="`category-${category}`"
+                                        :checked="activeFilters.categories.includes(category)"
+                                        class="hidden"
+                                    />
+                                    <span class="text-sm font-medium">{{ category }}</span>
+                                </label>
+                            </Motion>
                         </div>
                     </div>
                 </div>

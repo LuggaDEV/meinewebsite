@@ -84,18 +84,18 @@ function clearFilters() {
         <DropdownMenuTrigger as-child>
             <Button
                 variant="outline"
-                class="gap-2 transition-all duration-200 hover:border-[var(--color-forest)] hover:bg-[var(--color-forest)]/5"
-                :class="filterCount > 0 ? 'border-[var(--color-terracotta)] bg-[var(--color-terracotta)]/5' : ''"
+                class="gap-2 transition-all duration-200 hover:border-[var(--color-forest)] hover:bg-[var(--color-forest)]/5 dark:border-input dark:bg-input/30 dark:hover:border-border dark:hover:bg-accent dark:text-foreground"
+                :class="filterCount > 0 ? 'border-[var(--color-terracotta)] bg-[var(--color-terracotta)]/5 dark:border-[var(--color-terracotta)] dark:bg-[var(--color-terracotta)]/20' : ''"
             >
-                <Filter class="w-4 h-4" :class="filterCount > 0 ? 'text-[var(--color-terracotta)]' : ''" />
-                <span :class="filterCount > 0 ? 'font-semibold text-[var(--color-terracotta)]' : ''">
+                <Filter class="w-4 h-4" :class="filterCount > 0 ? 'text-[var(--color-terracotta)]' : 'dark:text-muted-foreground'" />
+                <span :class="filterCount > 0 ? 'font-semibold text-[var(--color-terracotta)]' : 'dark:text-foreground'">
                     {{ filterCount > 0 ? `Filter (${filterCount})` : 'Filter' }}
                 </span>
             </Button>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent
-            class="w-64 p-2"
+            class="w-64 p-2 bg-popover dark:bg-popover text-popover-foreground dark:text-popover-foreground border border-border"
             side="bottom"
             align="start"
             :side-offset="8"
@@ -104,7 +104,7 @@ function clearFilters() {
         >
             <div class="space-y-3">
                 <div>
-                    <DropdownMenuLabel class="text-xs font-semibold text-[var(--color-forest)] uppercase tracking-wider px-2">
+                    <DropdownMenuLabel class="text-xs font-semibold text-[var(--color-forest)] dark:text-foreground uppercase tracking-wider px-2">
                         Zubereitungszeit
                     </DropdownMenuLabel>
                     <DropdownMenuGroup class="mt-1">
@@ -116,7 +116,7 @@ function clearFilters() {
                                 'bg-[var(--color-terracotta)]/10 text-[var(--color-terracotta)] font-medium':
                                     modelValue.prepTime.includes(option.value)
                             }"
-                            class="cursor-pointer hover:bg-[var(--color-forest)]/5 transition-all duration-200 rounded-md"
+                            class="cursor-pointer hover:bg-[var(--color-forest)]/5 dark:hover:bg-accent transition-all duration-200 rounded-md"
                             @select.prevent="(event) => {
                                 event.preventDefault()
                                 toggleFilter('prepTime', option.value, !modelValue.prepTime.includes(option.value))
@@ -127,10 +127,10 @@ function clearFilters() {
                     </DropdownMenuGroup>
                 </div>
 
-                <DropdownMenuSeparator class="bg-[var(--color-forest)]/10" />
+                <DropdownMenuSeparator class="bg-[var(--color-forest)]/10 dark:bg-border" />
 
                 <div>
-                    <DropdownMenuLabel class="text-xs font-semibold text-[var(--color-forest)] uppercase tracking-wider px-2">
+                    <DropdownMenuLabel class="text-xs font-semibold text-[var(--color-forest)] dark:text-foreground uppercase tracking-wider px-2">
                         Kochzeit
                     </DropdownMenuLabel>
                     <DropdownMenuGroup class="mt-1">
@@ -142,7 +142,7 @@ function clearFilters() {
                                 'bg-[var(--color-terracotta)]/10 text-[var(--color-terracotta)] font-medium':
                                     modelValue.cookTime.includes(option.value)
                             }"
-                            class="cursor-pointer hover:bg-[var(--color-forest)]/5 transition-all duration-200 rounded-md"
+                            class="cursor-pointer hover:bg-[var(--color-forest)]/5 dark:hover:bg-accent transition-all duration-200 rounded-md"
                             @select.prevent="(event) => {
                                 event.preventDefault()
                                 toggleFilter('cookTime', option.value, !modelValue.cookTime.includes(option.value))
@@ -153,10 +153,10 @@ function clearFilters() {
                     </DropdownMenuGroup>
                 </div>
 
-                <DropdownMenuSeparator class="bg-[var(--color-forest)]/10" />
+                <DropdownMenuSeparator class="bg-[var(--color-forest)]/10 dark:bg-border" />
 
                 <div>
-                    <DropdownMenuLabel class="text-xs font-semibold text-[var(--color-forest)] uppercase tracking-wider px-2">
+                    <DropdownMenuLabel class="text-xs font-semibold text-[var(--color-forest)] dark:text-foreground uppercase tracking-wider px-2">
                         Portionen
                     </DropdownMenuLabel>
                     <DropdownMenuGroup class="mt-1">
@@ -168,7 +168,7 @@ function clearFilters() {
                                 'bg-[var(--color-terracotta)]/10 text-[var(--color-terracotta)] font-medium':
                                     modelValue.servings.includes(option.value)
                             }"
-                            class="cursor-pointer hover:bg-[var(--color-forest)]/5 transition-all duration-200 rounded-md"
+                            class="cursor-pointer hover:bg-[var(--color-forest)]/5 dark:hover:bg-accent transition-all duration-200 rounded-md"
                             @select.prevent="(event) => {
                                 event.preventDefault()
                                 toggleFilter('servings', option.value, !modelValue.servings.includes(option.value))
@@ -180,10 +180,10 @@ function clearFilters() {
                 </div>
 
                 <template v-if="filterCount > 0">
-                    <DropdownMenuSeparator class="bg-[var(--color-forest)]/10" />
+                    <DropdownMenuSeparator class="bg-[var(--color-forest)]/10 dark:bg-border" />
                     <button
                         @click="clearFilters"
-                        class="w-full px-3 py-2 text-sm font-medium text-[var(--color-terracotta)] hover:bg-[var(--color-terracotta)]/10 rounded-md transition-all duration-200 text-left flex items-center gap-2"
+                        class="w-full px-3 py-2 text-sm font-medium text-[var(--color-terracotta)] hover:bg-[var(--color-terracotta)]/10 dark:hover:bg-accent rounded-md transition-all duration-200 text-left flex items-center gap-2"
                     >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />

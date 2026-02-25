@@ -152,7 +152,7 @@ function clearAllFilters() {
                 :transition="{ duration: 0.6, ease: 'easeOut' }"
                 :viewport="{ once: true }"
             >
-                <h2 class="font-heading text-3xl md:text-4xl font-semibold text-[var(--color-forest)] text-center mb-12">
+                <h2 class="font-heading text-3xl md:text-4xl font-semibold text-[var(--color-forest)] dark:text-foreground text-center mb-12">
                     Rezepte
                 </h2>
             </Motion>
@@ -174,7 +174,7 @@ function clearAllFilters() {
                 />
 
                 <!-- Result Count -->
-                <div v-if="hasActiveFilters && filteredRecipes.length > 0" class="text-center text-sm text-[var(--color-warm-gray)]">
+                <div v-if="hasActiveFilters && filteredRecipes.length > 0" class="text-center text-sm text-[var(--color-warm-gray)] dark:text-muted-foreground">
                     {{ filteredRecipes.length }} Rezept{{ filteredRecipes.length !== 1 ? 'e' : '' }} gefunden
                 </div>
             </div>
