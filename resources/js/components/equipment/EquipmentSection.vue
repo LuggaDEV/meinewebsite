@@ -1,51 +1,65 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
+import { router } from '@inertiajs/vue3'
 import { Motion } from 'motion-v'
 import { Search } from 'lucide-vue-next'
 import EquipmentCard from './EquipmentCard.vue'
-import type { Equipment, ActiveFilters } from '@/types/equipment'
+import type { ActiveFilters } from '@/types/equipment'
 import Input from '@/components/ui/input/Input.vue'
 import Label from '@/components/ui/label/Label.vue'
 import Checkbox from '@/components/ui/checkbox/Checkbox.vue'
-import Badge from '@/components/ui/badge/Badge.vue'
 
 const props = defineProps<{
-    equipment: Equipment[]
+    equipment: any,
+    filters: { search: string, categories: string[] },
+    allCategories: string[],
 }>()
 
-const searchQuery = ref<string>('')
+const searchQuery = ref<string>(props.filters?.search ?? '')
 const activeFilters = ref<ActiveFilters>({
-    categories: []
+    categories: [...(props.filters?.categories ?? [])]
 })
 
-// Extract unique categories from equipment
+// Sync local state when props change (e.g. Inertia visit, back/forward)
+let isSyncingFromProps = false
+watch(() => props.filters, (newFilters) => {
+    if (!newFilters) return
+    isSyncingFromProps = true
+    searchQuery.value = newFilters.search ?? ''
+    activeFilters.value.categories = Array.isArray(newFilters.categories) ? [...newFilters.categories] : []
+    nextTick(() => { isSyncingFromProps = false })
+}, { deep: true })
+
+// Extract unique categories from server-provided allCategories (safe default)
 const availableCategories = computed(() => {
-    const categories = new Set(props.equipment.map(item => item.category))
-    return Array.from(categories).sort()
+    const list = props.allCategories ?? []
+    if (!Array.isArray(list)) return []
+    return list.slice().sort()
 })
 
-// Filtered equipment
-const filteredEquipment = computed(() => {
-    return props.equipment.filter((item) => {
-        // 1. Search query filter
-        if (searchQuery.value) {
-            const query = searchQuery.value.toLowerCase()
-            const matchesName = item.name.toLowerCase().includes(query)
-            if (!matchesName) return false
-        }
-
-        // 2. Category filter
-        if (activeFilters.value.categories.length > 0) {
-            if (!activeFilters.value.categories.includes(item.category)) {
-                return false
-            }
-        }
-
-        return true
-    })
+// Items from server (paginated) or raw array fallback (always return array)
+const items = computed(() => {
+    const eq = props.equipment
+    if (!eq) return []
+    // Laravel paginator: serialized as { data: [...], current_page, ... }
+    const data = eq.data ?? eq.items
+    if (Array.isArray(data)) return data
+    if (Array.isArray(eq)) return eq
+    return []
 })
 
-// Toggle category filter
+let searchTimeout: ReturnType<typeof setTimeout> | null = null
+
+function submitFilters(): void {
+    if (isSyncingFromProps) return
+    const params: Record<string, string> = {}
+    if (searchQuery.value) params.search = searchQuery.value
+    if (activeFilters.value.categories.length > 0) params.categories = activeFilters.value.categories.join(',')
+
+    router.get('/equipment', params, { preserveScroll: true })
+}
+
+// Toggle category filter and submit to server
 function toggleCategory(category: string): void {
     const index = activeFilters.value.categories.indexOf(category)
     if (index === -1) {
@@ -53,17 +67,28 @@ function toggleCategory(category: string): void {
     } else {
         activeFilters.value.categories.splice(index, 1)
     }
+    submitFilters()
 }
 
-// Clear all filters
+// Clear all filters and submit
 function clearAllFilters(): void {
     activeFilters.value.categories = []
     searchQuery.value = ''
+    submitFilters()
 }
+
+// Watch search input and debounce submissions (only when user changes input, not when syncing from props)
+watch(searchQuery, () => {
+    if (isSyncingFromProps) return
+    if (searchTimeout) clearTimeout(searchTimeout)
+    searchTimeout = setTimeout(() => {
+        submitFilters()
+    }, 500)
+})
 
 // Check if any filters are active
 const hasActiveFilters = computed(() => {
-    return activeFilters.value.categories.length > 0 || searchQuery.value.length > 0
+    return activeFilters.value.categories.length > 0 || (searchQuery.value && searchQuery.value.length > 0)
 })
 </script>
 
@@ -115,11 +140,11 @@ const hasActiveFilters = computed(() => {
                                     'bg-[var(--color-forest)] text-white border-[var(--color-forest)]': activeFilters.categories.includes(category),
                                     'bg-white': !activeFilters.categories.includes(category)
                                 }"
+                                @click.prevent="toggleCategory(category)"
                             >
                                 <Checkbox
                                     :id="`category-${category}`"
                                     :checked="activeFilters.categories.includes(category)"
-                                    @update:checked="toggleCategory(category)"
                                     class="hidden"
                                 />
                                 <span class="text-sm font-medium">{{ category }}</span>
@@ -130,9 +155,9 @@ const hasActiveFilters = computed(() => {
             </Motion>
 
             <!-- Equipment Grid -->
-            <div v-if="filteredEquipment.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <div v-if="items.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                 <EquipmentCard
-                    v-for="item in filteredEquipment"
+                    v-for="item in items"
                     :key="item.id"
                     :equipment="item"
                 />

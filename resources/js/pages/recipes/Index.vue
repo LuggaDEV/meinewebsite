@@ -17,9 +17,12 @@ const props = defineProps<{
     } | null
 }>()
 
-// Für Instagram-Sektion: letzte 6 Rezepte (oder alle, wenn weniger vorhanden)
+// Für Instagram-Sektion: letzte 6 Rezepte mit Bild (oder alle mit Bild, wenn weniger vorhanden)
 const instagramRecipes = computed(() => {
-    return props.recipes.slice(-6).reverse()
+    return props.recipes
+        .filter((recipe) => Boolean(recipe.image))
+        .slice(-6)
+        .reverse()
 })
 </script>
 

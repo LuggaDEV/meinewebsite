@@ -5,7 +5,9 @@ import EquipmentSection from '@/components/equipment/EquipmentSection.vue'
 import type { Equipment } from '@/types/equipment'
 
 defineProps<{
-    equipment: Equipment[]
+    equipment: any,
+    filters: { search: string, categories: string[] },
+    allCategories: string[],
 }>()
 </script>
 
@@ -42,6 +44,6 @@ defineProps<{
         </section>
 
         <!-- Equipment Section -->
-        <EquipmentSection :equipment="equipment" />
+        <EquipmentSection :equipment="equipment" :filters="filters" :all-categories="allCategories" />
     </RecipeLayout>
 </template>
