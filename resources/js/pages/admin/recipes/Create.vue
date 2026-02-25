@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { router, useForm } from '@inertiajs/vue3'
-import { ref } from 'vue'
 import { VueDraggableNext } from 'vue-draggable-next'
 import RecipeLayout from '@/layouts/RecipeLayout.vue'
-
-const fileInput = ref<HTMLInputElement | null>(null)
-const imagePreview = ref<string>('')
+import ImageCropResize from '@/components/admin/ImageCropResize.vue'
 
 // Verfügbare Einheiten
 const units = [
@@ -72,27 +69,6 @@ const form = useForm({
     ingredients: [{ amount: '', unit: '', ingredient: '', notes: '' }] as Array<{ amount: string; unit: string; ingredient: string; notes: string }>,
     instructions: [''] as string[],
 })
-
-function handleImageChange(event: Event): void {
-    const target = event.target as HTMLInputElement
-    const file = target.files?.[0]
-    if (file) {
-        form.image = file
-        const reader = new FileReader()
-        reader.onload = (e) => {
-            imagePreview.value = e.target.result as string
-        }
-        reader.readAsDataURL(file)
-    }
-}
-
-function clearImage(): void {
-    form.image = null
-    imagePreview.value = ''
-    if (fileInput.value) {
-        fileInput.value.value = ''
-    }
-}
 
 function addIngredientRow(): void {
     form.ingredients.push({ amount: '', unit: '', ingredient: '', notes: '' })
@@ -167,27 +143,10 @@ function submit(): void {
                             <label class="block text-sm font-medium text-[var(--color-forest)] mb-2">
                                 Bild
                             </label>
-                            <input
-                                ref="fileInput"
-                                type="file"
-                                accept="image/*"
-                                @change="handleImageChange"
-                                class="w-full px-4 py-2 border border-[var(--color-forest)]/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-terracotta)] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[var(--color-forest)] file:text-white hover:file:bg-[var(--color-terracotta)] file:cursor-pointer"
+                            <ImageCropResize
+                                :model-value="form.image"
+                                @update:model-value="form.image = $event"
                             />
-                            <div v-if="imagePreview" class="mt-4">
-                                <img
-                                    :src="imagePreview"
-                                    alt="Vorschau"
-                                    class="w-full max-w-xs h-48 object-cover rounded-lg border border-[var(--color-forest)]/20"
-                                />
-                                <button
-                                    type="button"
-                                    @click="clearImage"
-                                    class="mt-2 text-sm text-red-600 hover:text-red-700"
-                                >
-                                    Bild entfernen
-                                </button>
-                            </div>
                             <div v-if="form.errors.image" class="mt-1 text-sm text-red-600">
                                 {{ form.errors.image }}
                             </div>
