@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3'
+import { Link, router, useForm, usePage } from '@inertiajs/vue3'
 import { Motion } from 'motion-v'
 import RecipeLayout from '@/layouts/RecipeLayout.vue'
+import { store as storeReview, update as updateReview, destroy as destroyReview } from '@/routes/recipes/reviews'
 import { computed, ref, onUnmounted, onBeforeUnmount } from 'vue'
+import type { RecipeReview } from '@/types/recipe'
+
+const page = usePage()
 
 const props = defineProps<{
     recipe: {
@@ -16,8 +20,63 @@ const props = defineProps<{
         rest_time: number | null
         ingredients: string[]
         instructions: string[]
+        average_rating?: number
+        reviews_count?: number
+        reviews?: RecipeReview[]
+        user_review?: RecipeReview | null
     }
 }>()
+
+const isAuthenticated = computed(() => Boolean((page.props.auth as { user?: unknown })?.user))
+
+const editingReview = ref(false)
+const reviewForm = useForm({
+    rating: props.recipe.user_review?.rating ?? 0,
+    author_name: props.recipe.user_review?.user?.name ?? '',
+    body: props.recipe.user_review?.body ?? '',
+})
+
+function openEditReview(): void {
+    reviewForm.rating = props.recipe.user_review?.rating ?? 0
+    reviewForm.author_name = props.recipe.user_review?.user?.name ?? props.recipe.user_review?.author_name ?? ''
+    reviewForm.body = props.recipe.user_review?.body ?? ''
+    editingReview.value = true
+}
+
+function cancelEditReview(): void {
+    editingReview.value = false
+    reviewForm.reset()
+}
+
+function submitReview(): void {
+    if (reviewForm.rating < 1 || reviewForm.rating > 5) return
+    if (props.recipe.user_review) {
+        reviewForm.put(updateReview.url({ recipe: props.recipe.id, review: props.recipe.user_review.id }), {
+            preserveScroll: true,
+            onSuccess: () => { editingReview.value = false },
+        })
+    } else {
+        reviewForm.post(storeReview.url(props.recipe.id), {
+            preserveScroll: true,
+            onSuccess: () => { editingReview.value = false },
+        })
+    }
+}
+
+function deleteReview(): void {
+    if (!props.recipe.user_review) return
+    if (!confirm('Möchtest du deine Bewertung wirklich löschen?')) return
+    router.delete(destroyReview.url({ recipe: props.recipe.id, review: props.recipe.user_review.id }), { preserveScroll: true })
+}
+
+function formatReviewDate(iso: string): string {
+    return new Date(iso).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' })
+}
+
+function starClasses(index: number, rating: number): string {
+    const r = Math.round(rating)
+    return index < r ? 'text-[var(--color-terracotta)]' : 'text-[var(--color-warm-gray)]/30'
+}
 
 // Formatiere Minuten zu Stunden/Minuten für die Anzeige
 function formatTime(minutes: number | null): string {
@@ -259,6 +318,146 @@ document.addEventListener('visibilitychange', async () => {
                                 </ol>
                             </section>
                         </div>
+                    </Motion>
+
+                    <!-- Bewertungen & Rezensionen -->
+                    <Motion
+                        :initial="{ opacity: 0, y: 20 }"
+                        :animate="{ opacity: 1, y: 0 }"
+                        :transition="{ duration: 0.5, delay: 0.5 }"
+                        class="mt-12 pt-8 border-t border-[var(--color-forest)]/10"
+                    >
+                        <h2 class="font-heading text-2xl md:text-3xl font-semibold text-[var(--color-forest)] mb-6">
+                            Bewertungen & Rezensionen
+                        </h2>
+
+                        <!-- Übersicht -->
+                        <div v-if="(recipe.reviews_count ?? 0) > 0" class="flex items-center gap-4 mb-6">
+                            <div class="flex items-center gap-1" aria-label="Durchschnitt: {{ recipe.average_rating }} von 5 Sternen">
+                                <template v-for="i in 5" :key="i">
+                                    <svg
+                                        :class="starClasses(i - 1, recipe.average_rating ?? 0)"
+                                        class="w-6 h-6"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                    </svg>
+                                </template>
+                            </div>
+                            <span class="text-[var(--color-warm-gray)]">
+                                {{ recipe.average_rating?.toFixed(1) }} ({{ recipe.reviews_count }} {{ recipe.reviews_count === 1 ? 'Bewertung' : 'Bewertungen' }})
+                            </span>
+                        </div>
+
+                        <!-- Formular: für alle (mit und ohne Anmeldung); Bearbeiten/Löschen nur für eingeloggte User mit eigener Bewertung -->
+                        <div class="mb-8">
+                            <div v-if="isAuthenticated && recipe.user_review && !editingReview" class="p-4 bg-[var(--color-cream)] rounded-lg border border-[var(--color-forest)]/10">
+                                <p class="text-sm font-medium text-[var(--color-forest)] mb-1">Deine Bewertung</p>
+                                <div class="flex gap-1 mb-2">
+                                    <template v-for="i in 5" :key="i">
+                                        <span :class="i <= recipe.user_review.rating ? 'text-[var(--color-terracotta)]' : 'text-[var(--color-warm-gray)]/30'" class="text-lg">★</span>
+                                    </template>
+                                </div>
+                                <p v-if="recipe.user_review.body" class="text-[var(--color-warm-gray)] text-sm mb-3">{{ recipe.user_review.body }}</p>
+                                <div class="flex gap-2">
+                                    <button
+                                        type="button"
+                                        @click="openEditReview"
+                                        class="text-sm font-medium text-[var(--color-terracotta)] hover:underline"
+                                    >
+                                        Bearbeiten
+                                    </button>
+                                    <button
+                                        type="button"
+                                        @click="deleteReview"
+                                        class="text-sm font-medium text-[var(--color-warm-gray)] hover:underline"
+                                    >
+                                        Löschen
+                                    </button>
+                                </div>
+                            </div>
+                            <form v-else @submit.prevent="submitReview" class="p-4 bg-[var(--color-cream)] rounded-lg border border-[var(--color-forest)]/10 space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-[var(--color-forest)] mb-2">Sterne *</label>
+                                    <div class="flex gap-1">
+                                        <button
+                                            v-for="i in 5"
+                                            :key="i"
+                                            type="button"
+                                            @click="reviewForm.rating = i"
+                                            :class="i <= reviewForm.rating ? 'text-[var(--color-terracotta)]' : 'text-[var(--color-warm-gray)]/30'"
+                                            class="text-2xl hover:opacity-80 transition-opacity"
+                                            :aria-label="`${i} Sterne`"
+                                        >
+                                            ★
+                                        </button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="review-author-name" class="block text-sm font-medium text-[var(--color-forest)] mb-2">Dein Name (optional)</label>
+                                    <input
+                                        id="review-author-name"
+                                        v-model="reviewForm.author_name"
+                                        type="text"
+                                        maxlength="255"
+                                        class="w-full rounded-lg border border-[var(--color-forest)]/20 px-3 py-2 text-[var(--color-forest)] placeholder-[var(--color-warm-gray)] focus:border-[var(--color-terracotta)] focus:ring-1 focus:ring-[var(--color-terracotta)]"
+                                        placeholder="Wie soll dein Name angezeigt werden?"
+                                    />
+                                </div>
+                                <div>
+                                    <label for="review-body" class="block text-sm font-medium text-[var(--color-forest)] mb-2">Rezension (optional)</label>
+                                    <textarea
+                                        id="review-body"
+                                        v-model="reviewForm.body"
+                                        rows="3"
+                                        maxlength="2000"
+                                        class="w-full rounded-lg border border-[var(--color-forest)]/20 px-3 py-2 text-[var(--color-forest)] placeholder-[var(--color-warm-gray)] focus:border-[var(--color-terracotta)] focus:ring-1 focus:ring-[var(--color-terracotta)]"
+                                        placeholder="Wie hat dir das Rezept geschmeckt?"
+                                    />
+                                </div>
+                                <div class="flex gap-2">
+                                    <button
+                                        type="submit"
+                                        :disabled="reviewForm.rating < 1 || reviewForm.processing"
+                                        class="px-4 py-2 bg-[var(--color-terracotta)] text-white rounded-lg font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {{ recipe.user_review ? 'Aktualisieren' : 'Bewertung absenden' }}
+                                    </button>
+                                    <button
+                                        v-if="editingReview"
+                                        type="button"
+                                        @click="cancelEditReview"
+                                        class="px-4 py-2 text-[var(--color-warm-gray)] hover:underline"
+                                    >
+                                        Abbrechen
+                                    </button>
+                                </div>
+                                <p v-if="reviewForm.errors.rating" class="text-sm text-red-600">{{ reviewForm.errors.rating }}</p>
+                            </form>
+                        </div>
+
+                        <!-- Liste der Rezensionen -->
+                        <ul v-if="recipe.reviews && recipe.reviews.length > 0" class="space-y-4">
+                            <li
+                                v-for="review in recipe.reviews"
+                                :key="review.id"
+                                class="p-4 rounded-lg border border-[var(--color-forest)]/10 bg-white"
+                            >
+                                <div class="flex gap-2 mb-1">
+                                    <template v-for="i in 5" :key="i">
+                                        <span :class="i <= review.rating ? 'text-[var(--color-terracotta)]' : 'text-[var(--color-warm-gray)]/30'" class="text-sm">★</span>
+                                    </template>
+                                    <span class="text-sm font-medium text-[var(--color-forest)]">{{ review.user.name }}</span>
+                                    <span class="text-sm text-[var(--color-warm-gray)]">{{ formatReviewDate(review.created_at) }}</span>
+                                </div>
+                                <p v-if="review.body" class="text-[var(--color-warm-gray)] text-sm">{{ review.body }}</p>
+                                <div v-if="review.reply" class="mt-3 pl-3 border-l-2 border-[var(--color-terracotta)]/30">
+                                    <p class="text-xs font-medium text-[var(--color-forest)] mb-0.5">Antwort</p>
+                                    <p class="text-sm text-[var(--color-warm-gray)]">{{ review.reply }}</p>
+                                </div>
+                            </li>
+                        </ul>
                     </Motion>
                 </article>
             </Motion>

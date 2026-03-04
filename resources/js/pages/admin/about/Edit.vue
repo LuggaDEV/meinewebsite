@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { router, useForm } from '@inertiajs/vue3'
+import { Link, useForm } from '@inertiajs/vue3'
 import { ref } from 'vue'
-import RecipeLayout from '@/layouts/RecipeLayout.vue'
+import AdminLayout from '@/layouts/AdminLayout.vue'
+import { index as adminIndex } from '@/routes/admin'
+import { update } from '@/routes/admin/about'
 
 const props = defineProps<{
     about: {
@@ -56,7 +58,7 @@ function submit(): void {
             delete transformed.image
         }
         return transformed
-    }).put('/admin/about', {
+    }).put(update.url(), {
         forceFormData: true,
         preserveScroll: true,
         onSuccess: () => {
@@ -70,16 +72,8 @@ function submit(): void {
 </script>
 
 <template>
-    <RecipeLayout>
-        <div class="py-12 md:py-16">
-            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="mb-8">
-                    <h1 class="font-heading text-3xl md:text-4xl font-semibold text-[var(--color-forest)] mb-2">
-                        Über Mich Sektion bearbeiten
-                    </h1>
-                </div>
-
-                <form @submit.prevent="submit" class="bg-white rounded-xl shadow-md p-6 md:p-8 space-y-6">
+    <AdminLayout title="Über Mich" subtitle="Inhalt der „Über mich“-Sektion bearbeiten">
+        <form @submit.prevent="submit" class="rounded-xl border border-[var(--color-forest)]/10 bg-white p-6 shadow-sm md:p-8 space-y-6">
                     <div>
                         <label class="block text-sm font-medium text-[var(--color-forest)] mb-2">
                             Titel *
@@ -141,24 +135,21 @@ function submit(): void {
                         </div>
                     </div>
 
-                    <div class="flex gap-4 pt-4">
+                    <div class="flex flex-wrap gap-3 border-t border-[var(--color-forest)]/10 pt-6">
                         <button
                             type="submit"
                             :disabled="form.processing"
-                            class="px-6 py-3 bg-[var(--color-forest)] text-white font-medium rounded-lg hover:bg-[var(--color-terracotta)] transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-forest)] disabled:opacity-50"
+                            class="rounded-lg bg-[var(--color-forest)] px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[var(--color-terracotta)] focus:outline-none focus:ring-2 focus:ring-[var(--color-forest)] focus:ring-offset-2 disabled:opacity-50"
                         >
-                            {{ form.processing ? 'Wird gespeichert...' : 'Speichern' }}
+                            {{ form.processing ? 'Wird gespeichert…' : 'Speichern' }}
                         </button>
-                        <button
-                            type="button"
-                            @click="router.visit('/admin')"
-                            class="px-6 py-3 text-[var(--color-forest)] font-medium rounded-lg hover:bg-[var(--color-forest)]/5 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-forest)]"
+                        <Link
+                            :href="adminIndex.url()"
+                            class="rounded-lg border border-[var(--color-forest)]/20 px-5 py-2.5 text-sm font-medium text-[var(--color-forest)] transition-colors hover:bg-[var(--color-forest)]/5 focus:outline-none focus:ring-2 focus:ring-[var(--color-forest)] focus:ring-offset-2"
                         >
                             Abbrechen
-                        </button>
+                        </Link>
                     </div>
                 </form>
-            </div>
-        </div>
-    </RecipeLayout>
+    </AdminLayout>
 </template>

@@ -1,24 +1,83 @@
 <script setup lang="ts">
-import { router, useForm } from '@inertiajs/vue3'
+import { Link, router, useForm } from '@inertiajs/vue3'
 import { ref } from 'vue'
 import { VueDraggableNext } from 'vue-draggable-next'
-import RecipeLayout from '@/layouts/RecipeLayout.vue'
+import AdminLayout from '@/layouts/AdminLayout.vue'
 import ImageCropResize from '@/components/admin/ImageCropResize.vue'
+import ConfirmDeleteModal from '@/components/admin/ConfirmDeleteModal.vue'
+import adminRecipesRoutes from '@/routes/admin/recipes'
+import { index, update } from '@/routes/admin/recipes'
 
-const props = defineProps<{
-    recipe: {
-        id: number
-        title: string
-        description: string
-        image: string | null
-        servings: number | null
-        prep_time: number | null
-        cook_time: number | null
-        rest_time: number | null
-        ingredients: string[]
-        instructions: string[]
-    }
-}>()
+interface ReviewItem {
+    id: number
+    rating: number
+    body: string | null
+    author_name: string | null
+    reply: string | null
+    replied_at: string | null
+    created_at: string
+    user: { id: number; name: string } | null
+}
+
+const props = withDefaults(
+    defineProps<{
+        recipe: {
+            id: number
+            title: string
+            description: string
+            image: string | null
+            servings: number | null
+            prep_time: number | null
+            cook_time: number | null
+            rest_time: number | null
+            ingredients: string[]
+            instructions: string[]
+        }
+        reviews?: ReviewItem[]
+    }>(),
+    { reviews: () => [] }
+)
+
+const reviewReplyDraft = ref<Record<number, string>>({})
+const deleteModalOpen = ref(false)
+const reviewToDelete = ref<ReviewItem | null>(null)
+
+function authorDisplay(r: ReviewItem): string {
+    return r.author_name ?? r.user?.name ?? 'Gast'
+}
+
+function formatDate(iso: string): string {
+    return new Date(iso).toLocaleDateString('de-DE', { day: 'numeric', month: 'short', year: 'numeric' })
+}
+
+function getReplyDraft(r: ReviewItem): string {
+    return reviewReplyDraft.value[r.id] ?? r.reply ?? ''
+}
+
+function setReplyDraft(r: ReviewItem, value: string): void {
+    reviewReplyDraft.value[r.id] = value
+}
+
+function submitReply(review: ReviewItem): void {
+    const reply = (reviewReplyDraft.value[review.id] ?? review.reply ?? '').trim()
+    router.put(adminRecipesRoutes.reviews.reply.url({ recipe: props.recipe.id, review: review.id }), { reply: reply || null }, { preserveScroll: true })
+}
+
+function openDeleteModal(review: ReviewItem): void {
+    reviewToDelete.value = review
+    deleteModalOpen.value = true
+}
+
+function cancelDelete(): void {
+    deleteModalOpen.value = false
+    reviewToDelete.value = null
+}
+
+function confirmDelete(): void {
+    if (!reviewToDelete.value) return
+    router.delete(adminRecipesRoutes.reviews.destroy.url({ recipe: props.recipe.id, review: reviewToDelete.value.id }), { preserveScroll: true })
+    cancelDelete()
+}
 
 const imageRemoved = ref<boolean>(false)
 
@@ -216,27 +275,19 @@ function submit(): void {
             delete transformed.image
         }
         return transformed
-    }).put(`/admin/recipes/${props.recipe.id}`, {
+    }).put(update.url(props.recipe.id), {
         forceFormData: true,
         preserveScroll: true,
         onSuccess: () => {
-            router.visit('/admin/recipes')
+            router.visit(index.url())
         },
     })
 }
 </script>
 
 <template>
-    <RecipeLayout>
-        <div class="py-12 md:py-16">
-            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="mb-8">
-                    <h1 class="font-heading text-3xl md:text-4xl font-semibold text-[var(--color-forest)] mb-2">
-                        Rezept bearbeiten
-                    </h1>
-                </div>
-
-                <form @submit.prevent="submit" class="bg-white rounded-xl shadow-md p-6 md:p-8 space-y-6">
+    <AdminLayout title="Rezept bearbeiten" :subtitle="recipe.title">
+        <form @submit.prevent="submit" class="rounded-xl border border-[var(--color-forest)]/10 bg-white p-6 shadow-sm md:p-8 space-y-6">
                     <div class="grid md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-[var(--color-forest)] mb-2">
@@ -539,24 +590,84 @@ function submit(): void {
                         </div>
                     </div>
 
+                    <!-- Bewertungen -->
+                    <div v-if="(reviews ?? []).length > 0" class="border-t border-[var(--color-forest)]/20 pt-6">
+                        <h3 class="text-lg font-semibold text-[var(--color-forest)] mb-4">Bewertungen</h3>
+                        <ul class="space-y-4">
+                            <li
+                                v-for="r in (reviews ?? [])"
+                                :key="r.id"
+                                class="p-4 rounded-lg border border-[var(--color-forest)]/10 bg-[var(--color-cream)]/30 space-y-3"
+                            >
+                                <div class="flex flex-wrap items-center gap-2 text-sm">
+                                    <span class="font-medium text-[var(--color-forest)]">{{ authorDisplay(r) }}</span>
+                                    <span class="text-[var(--color-warm-gray)]">{{ formatDate(r.created_at) }}</span>
+                                    <span class="flex gap-0.5" :aria-label="`${r.rating} von 5 Sternen`">
+                                        <template v-for="i in 5" :key="i">
+                                            <span :class="i <= r.rating ? 'text-[var(--color-terracotta)]' : 'text-[var(--color-warm-gray)]/40'" class="text-sm">★</span>
+                                        </template>
+                                    </span>
+                                </div>
+                                <p v-if="r.body" class="text-sm text-[var(--color-warm-gray)]">{{ r.body }}</p>
+                                <div v-if="r.reply" class="pl-3 border-l-2 border-[var(--color-terracotta)]/30">
+                                    <p class="text-xs font-medium text-[var(--color-forest)] mb-1">Deine Antwort</p>
+                                    <p class="text-sm text-[var(--color-warm-gray)]">{{ r.reply }}</p>
+                                    <p v-if="r.replied_at" class="text-xs text-[var(--color-warm-gray)]/80 mt-1">{{ formatDate(r.replied_at) }}</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <div class="flex-1 min-w-0">
+                                        <textarea
+                                            :value="getReplyDraft(r)"
+                                            @input="setReplyDraft(r, ($event.target as HTMLTextAreaElement).value)"
+                                            rows="2"
+                                            maxlength="2000"
+                                            class="w-full px-3 py-2 text-sm border border-[var(--color-forest)]/20 rounded-lg focus:ring-2 focus:ring-[var(--color-terracotta)]"
+                                            :placeholder="r.reply ? 'Antwort bearbeiten...' : 'Antwort schreiben...'"
+                                        />
+                                    </div>
+                                    <div class="flex gap-2 items-end">
+                                        <button
+                                            type="button"
+                                            @click="submitReply(r)"
+                                            class="px-3 py-2 text-sm font-medium bg-[var(--color-terracotta)] text-white rounded-lg hover:opacity-90"
+                                        >
+                                            {{ r.reply ? 'Antwort aktualisieren' : 'Antworten' }}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            @click="openDeleteModal(r)"
+                                            class="px-3 py-2 text-sm font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50"
+                                        >
+                                            Löschen
+                                        </button>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                        <ConfirmDeleteModal
+                            :open="deleteModalOpen"
+                            title="Bewertung löschen"
+                            message="Möchten Sie diese Bewertung wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden."
+                            @confirm="confirmDelete"
+                            @cancel="cancelDelete"
+                        />
+                    </div>
+
                     <div class="flex gap-4 pt-4">
                         <button
                             type="submit"
                             :disabled="form.processing"
-                            class="px-6 py-3 bg-[var(--color-forest)] text-white font-medium rounded-lg hover:bg-[var(--color-terracotta)] transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-forest)] disabled:opacity-50"
+                            class="rounded-lg bg-[var(--color-forest)] px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[var(--color-terracotta)] focus:outline-none focus:ring-2 focus:ring-[var(--color-forest)] focus:ring-offset-2 disabled:opacity-50"
                         >
-                            {{ form.processing ? 'Wird gespeichert...' : 'Rezept aktualisieren' }}
+                            {{ form.processing ? 'Wird gespeichert…' : 'Rezept aktualisieren' }}
                         </button>
-                        <button
-                            type="button"
-                            @click="router.visit('/admin/recipes')"
-                            class="px-6 py-3 text-[var(--color-forest)] font-medium rounded-lg hover:bg-[var(--color-forest)]/5 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--color-forest)]"
+                        <Link
+                            :href="index.url()"
+                            class="rounded-lg border border-[var(--color-forest)]/20 px-5 py-2.5 text-sm font-medium text-[var(--color-forest)] transition-colors hover:bg-[var(--color-forest)]/5 focus:outline-none focus:ring-2 focus:ring-[var(--color-forest)] focus:ring-offset-2"
                         >
                             Abbrechen
-                        </button>
+                        </Link>
                     </div>
                 </form>
-            </div>
-        </div>
-    </RecipeLayout>
+    </AdminLayout>
 </template>

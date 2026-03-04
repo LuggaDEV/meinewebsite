@@ -3,15 +3,23 @@
 use App\Http\Controllers\Admin\AboutController as AdminAboutController;
 use App\Http\Controllers\Admin\EquipmentController as AdminEquipmentController;
 use App\Http\Controllers\Admin\RecipeController as AdminRecipeController;
+use App\Http\Controllers\Admin\RecipeReviewController as AdminRecipeReviewController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\RecipeReviewController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Laravel\Fortify\Features;
 
 Route::get('/', [RecipeController::class, 'index'])->name('home');
 
 Route::get('/recipe/{recipe}', [RecipeController::class, 'show'])->name('recipes.show');
+
+Route::post('/recipe/{recipe}/reviews', [RecipeReviewController::class, 'store'])->name('recipes.reviews.store');
+
+Route::middleware(['auth'])->group(function (): void {
+    Route::put('/recipe/{recipe}/reviews/{review}', [RecipeReviewController::class, 'update'])->name('recipes.reviews.update');
+    Route::delete('/recipe/{recipe}/reviews/{review}', [RecipeReviewController::class, 'destroy'])->name('recipes.reviews.destroy');
+});
 
 Route::get('/equipment', [EquipmentController::class, 'index'])->name('equipment.index');
 
@@ -31,7 +39,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/recipes/{recipe}/edit', [AdminRecipeController::class, 'edit'])->name('recipes.edit');
     Route::put('/recipes/{recipe}', [AdminRecipeController::class, 'update'])->name('recipes.update');
     Route::delete('/recipes/{recipe}', [AdminRecipeController::class, 'destroy'])->name('recipes.destroy');
-    
+    Route::get('/reviews', [AdminRecipeReviewController::class, 'index'])->name('reviews.index');
+    Route::put('/recipes/{recipe}/reviews/{review}/reply', [AdminRecipeReviewController::class, 'reply'])->name('recipes.reviews.reply');
+    Route::delete('/recipes/{recipe}/reviews/{review}', [AdminRecipeReviewController::class, 'destroy'])->name('recipes.reviews.destroy');
+
     Route::get('/about/edit', [AdminAboutController::class, 'edit'])->name('about.edit');
     Route::put('/about', [AdminAboutController::class, 'update'])->name('about.update');
 

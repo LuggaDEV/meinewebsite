@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Recipe;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -19,9 +19,10 @@ class RecipeController extends Controller
     public function index(): Response
     {
         $recipes = Recipe::latest()->get()->map(function ($recipe) {
-            if ($recipe->image && !str_starts_with($recipe->image, 'http')) {
-                $recipe->image = asset('storage/' . $recipe->image);
+            if ($recipe->image && ! str_starts_with($recipe->image, 'http')) {
+                $recipe->image = asset('storage/'.$recipe->image);
             }
+
             return $recipe;
         });
 
@@ -76,12 +77,27 @@ class RecipeController extends Controller
     public function edit(Recipe $recipe): Response
     {
         Gate::authorize('update', $recipe);
-        if ($recipe->image && !str_starts_with($recipe->image, 'http')) {
-            $recipe->image = asset('storage/' . $recipe->image);
+        if ($recipe->image && ! str_starts_with($recipe->image, 'http')) {
+            $recipe->image = asset('storage/'.$recipe->image);
         }
+
+        $recipe->load(['reviews' => fn ($q) => $q->with('user:id,name')->latest()]);
+        $reviews = $recipe->reviews->map(fn ($r) => [
+            'id' => $r->id,
+            'rating' => $r->rating,
+            'body' => $r->body,
+            'author_name' => $r->author_name,
+            'reply' => $r->reply,
+            'replied_at' => $r->replied_at?->toISOString(),
+            'created_at' => $r->created_at->toISOString(),
+            'user' => $r->user
+                ? ['id' => $r->user->id, 'name' => $r->user->name]
+                : null,
+        ])->values()->all();
 
         return Inertia::render('admin/recipes/Edit', [
             'recipe' => $recipe,
+            'reviews' => $reviews,
         ]);
     }
 

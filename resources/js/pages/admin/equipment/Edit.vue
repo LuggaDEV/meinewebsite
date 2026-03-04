@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { router, useForm } from '@inertiajs/vue3'
-import RecipeLayout from '@/layouts/RecipeLayout.vue'
+import { Link, useForm } from '@inertiajs/vue3'
+import AdminLayout from '@/layouts/AdminLayout.vue'
 import Input from '@/components/ui/input/Input.vue'
+import { index, update } from '@/routes/admin/equipment'
 import Label from '@/components/ui/label/Label.vue'
 import InputError from '@/components/InputError.vue'
 import ImageCropResize from '@/components/admin/ImageCropResize.vue'
@@ -33,27 +34,19 @@ function submit(): void {
     form.transform((data) => ({
         ...data,
         _method: 'PUT',
-    })).post(`/admin/equipment/${props.equipment.id}`, {
+    })).post(update.url(props.equipment.id), {
         forceFormData: true,
         preserveScroll: true,
         onSuccess: () => {
-            router.visit('/admin/equipment')
+            router.visit(index.url())
         },
     })
 }
 </script>
 
 <template>
-    <RecipeLayout>
-        <div class="py-12 md:py-16">
-            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="mb-8">
-                    <h1 class="font-heading text-3xl md:text-4xl font-semibold text-[var(--color-forest)] mb-2">
-                        Equipment bearbeiten
-                    </h1>
-                </div>
-
-                <form @submit.prevent="submit" class="bg-white rounded-xl shadow-md border border-[var(--color-forest)]/5 p-6 md:p-8 space-y-6">
+    <AdminLayout title="Equipment bearbeiten" :subtitle="equipment.name">
+        <form @submit.prevent="submit" class="max-w-2xl rounded-xl border border-[var(--color-forest)]/10 bg-white p-6 shadow-sm md:p-8 space-y-6">
                     <!-- Name -->
                     <div>
                         <Label for="name">Name *</Label>
@@ -124,24 +117,21 @@ function submit(): void {
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="flex items-center justify-end gap-4 pt-6 border-t border-[var(--color-forest)]/10">
-                        <button
-                            type="button"
-                            @click="router.visit('/admin/equipment')"
-                            class="px-6 py-3 text-[var(--color-forest)] font-medium rounded-lg border-2 border-[var(--color-forest)]/20 hover:border-[var(--color-terracotta)] hover:bg-[var(--color-terracotta)]/5 transition-colors"
+                    <div class="flex flex-wrap items-center justify-end gap-3 border-t border-[var(--color-forest)]/10 pt-6">
+                        <Link
+                            :href="index.url()"
+                            class="rounded-lg border border-[var(--color-forest)]/20 px-5 py-2.5 text-sm font-medium text-[var(--color-forest)] transition-colors hover:bg-[var(--color-forest)]/5"
                         >
                             Abbrechen
-                        </button>
+                        </Link>
                         <button
                             type="submit"
                             :disabled="form.processing"
-                            class="px-6 py-3 bg-[var(--color-forest)] text-white font-medium rounded-lg hover:bg-[var(--color-terracotta)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            class="rounded-lg bg-[var(--color-forest)] px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[var(--color-terracotta)] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {{ form.processing ? 'Speichern...' : 'Änderungen speichern' }}
+                            {{ form.processing ? 'Speichern…' : 'Änderungen speichern' }}
                         </button>
                     </div>
                 </form>
-            </div>
-        </div>
-    </RecipeLayout>
+    </AdminLayout>
 </template>

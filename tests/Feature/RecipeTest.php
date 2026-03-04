@@ -1,13 +1,11 @@
 <?php
 
 use App\Models\Recipe;
+use App\Models\RecipeReview;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
-use function Pest\Laravel\post;
-use function Pest\Laravel\put;
-use function Pest\Laravel\delete;
 
 test('guests can view recipes index', function (): void {
     Recipe::factory()->count(3)->create();
@@ -17,6 +15,24 @@ test('guests can view recipes index', function (): void {
         ->assertInertia(fn ($page) => $page
             ->component('recipes/Index')
             ->has('recipes', 3)
+        );
+});
+
+test('recipes index includes average_rating and reviews_count', function (): void {
+    $recipe = Recipe::factory()->create();
+    $user = User::factory()->create();
+    RecipeReview::factory()->create([
+        'recipe_id' => $recipe->id,
+        'user_id' => $user->id,
+        'rating' => 5,
+    ]);
+
+    get('/')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->has('recipes')
+            ->where('recipes.0.average_rating', 5)
+            ->where('recipes.0.reviews_count', 1)
         );
 });
 
@@ -32,6 +48,28 @@ test('guests can view a recipe', function (): void {
             ->component('recipes/Show')
             ->has('recipe')
             ->where('recipe.title', 'Test Rezept')
+        );
+});
+
+test('admin recipe edit includes reviews', function (): void {
+    $user = User::factory()->create();
+    $recipe = Recipe::factory()->create();
+    RecipeReview::factory()->create([
+        'recipe_id' => $recipe->id,
+        'user_id' => null,
+        'rating' => 5,
+        'body' => 'Toll!',
+    ]);
+
+    actingAs($user)
+        ->get(route('admin.recipes.edit', $recipe))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('admin/recipes/Edit')
+            ->has('recipe')
+            ->has('reviews', 1)
+            ->where('reviews.0.rating', 5)
+            ->where('reviews.0.body', 'Toll!')
         );
 });
 
