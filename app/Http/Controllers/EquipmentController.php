@@ -19,13 +19,25 @@ class EquipmentController extends Controller
             ->orderBy('name')
             ->get();
 
-        $allEquipment->transform(function ($item) {
-            if ($item->image && ! str_starts_with($item->image, 'http')) {
-                $item->image = asset('storage/'.$item->image);
-            }
+        $equipment = $allEquipment->map(function (Equipment $item) {
+            $image = $item->image && ! str_starts_with($item->image, 'http')
+                ? asset('storage/'.$item->image)
+                : $item->image;
 
-            return $item;
-        });
+            return [
+                'id' => $item->id,
+                'name' => $item->name,
+                'description' => $item->description,
+                'image' => $image,
+                'link' => $item->link,
+                'category' => $item->category,
+                'price' => $item->price,
+                'original_price' => $item->original_price,
+                'discount_percentage' => $item->discount_percentage,
+                'created_at' => $item->created_at?->toISOString(),
+                'updated_at' => $item->updated_at?->toISOString(),
+            ];
+        })->values()->all();
 
         $allCategories = Equipment::select('category')
             ->distinct()
@@ -34,7 +46,7 @@ class EquipmentController extends Controller
             ->toArray();
 
         return Inertia::render('equipment/Index', [
-            'equipment' => $allEquipment,
+            'equipment' => $equipment,
             'allCategories' => $allCategories,
         ]);
     }

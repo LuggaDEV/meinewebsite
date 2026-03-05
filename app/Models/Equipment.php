@@ -21,5 +21,15 @@ class Equipment extends Model
         'link',
         'category',
         'price',
+        'original_price',
+        'discount_percentage',
+        'last_price_checked_at',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'last_price_checked_at' => 'datetime',
+        ];
+    }
 }

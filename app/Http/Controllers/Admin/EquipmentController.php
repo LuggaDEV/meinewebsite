@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Equipment;
+use App\Services\EquipmentPriceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -15,6 +17,20 @@ use Inertia\Response;
 
 class EquipmentController extends Controller
 {
+    /**
+     * Run the equipment price check and redirect back with message.
+     */
+    public function checkPrices(): RedirectResponse
+    {
+        Gate::authorize('create', Equipment::class);
+
+        Artisan::call('equipment:check-prices');
+        $output = trim(Artisan::output());
+
+        return redirect()->route('admin.equipment.index')
+            ->with('success', $output ?: 'Preise wurden aktualisiert.');
+    }
+
     /**
      * Display a listing of equipment for admin.
      */
@@ -34,9 +50,9 @@ class EquipmentController extends Controller
     }
 
     /**
-     * Fetch metadata (name, description, image) from a URL via Open Graph / meta tags.
+     * Fetch metadata (name, description, image, price, UVP, discount) from a URL via Open Graph / meta tags and price block.
      */
-    public function fetchFromUrl(Request $request): JsonResponse
+    public function fetchFromUrl(Request $request, EquipmentPriceService $priceService): JsonResponse
     {
         Gate::authorize('create', Equipment::class);
 
@@ -61,6 +77,10 @@ class EquipmentController extends Controller
 
             $html = $response->body();
             $data = $this->parseMetaFromHtml($html, $url);
+            $priceData = $priceService->getPriceAndDiscountFromHtml($html);
+            $data['price'] = $priceData['price'] ?? $data['price'];
+            $data['original_price'] = $priceData['original_price'] ?? null;
+            $data['discount_percentage'] = $priceData['discount_percentage'] ?? null;
 
             return response()->json($data);
         } catch (\Exception $e) {
@@ -268,6 +288,8 @@ class EquipmentController extends Controller
             'link' => ['required', 'url', 'max:500'],
             'category' => ['required', 'string', 'max:100'],
             'price' => ['nullable', 'string', 'max:50'],
+            'original_price' => ['nullable', 'string', 'max:50'],
+            'discount_percentage' => ['nullable', 'string', 'max:10'],
         ]);
 
         if ($request->hasFile('image')) {
@@ -363,6 +385,8 @@ class EquipmentController extends Controller
             'link' => ['required', 'url', 'max:500'],
             'category' => ['required', 'string', 'max:100'],
             'price' => ['nullable', 'string', 'max:50'],
+            'original_price' => ['nullable', 'string', 'max:50'],
+            'discount_percentage' => ['nullable', 'string', 'max:10'],
         ]);
 
         if ($request->hasFile('image')) {

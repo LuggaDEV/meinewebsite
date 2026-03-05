@@ -24,6 +24,8 @@ const form = useForm({
     link: '',
     description: '',
     price: '',
+    original_price: '' as string | null,
+    discount_percentage: '' as string | null,
     image: null as File | null,
     image_url: null as string | null,
 })
@@ -71,6 +73,8 @@ async function fillFromLink(): Promise<void> {
         if (data.description) form.description = data.description
         if (data.image_url) form.image_url = data.image_url
         if (data.price) form.price = data.price
+        form.original_price = data.original_price ?? ''
+        form.discount_percentage = data.discount_percentage ?? ''
     } catch {
         fetchError.value = 'Die Seite konnte nicht geladen werden.'
     } finally {

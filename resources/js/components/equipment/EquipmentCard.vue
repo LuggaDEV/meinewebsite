@@ -1,11 +1,16 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { Motion } from 'motion-v'
 import type { Equipment } from '@/types/equipment'
 import Badge from '@/components/ui/badge/Badge.vue'
 
-defineProps<{
+const props = defineProps<{
     equipment: Equipment
 }>()
+
+const originalPrice = computed(() => props.equipment?.original_price ?? null)
+const discountPercentage = computed(() => props.equipment?.discount_percentage ?? null)
+const hasDiscount = computed(() => Boolean(originalPrice.value || discountPercentage.value))
 </script>
 
 <template>
@@ -16,14 +21,16 @@ defineProps<{
         :viewport="{ once: true, margin: '-50px' }"
     >
         <article class="group bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow overflow-hidden border border-[var(--color-forest)]/5 w-full">
-            <div class="aspect-[4/3] overflow-hidden bg-[var(--color-forest)]/5">
+            <div class="aspect-square min-h-[220px] sm:min-h-[260px] overflow-hidden bg-[var(--color-cream)] flex items-center justify-center p-4">
                 <img
                     v-if="equipment.image"
                     :src="equipment.image"
                     :alt="equipment.name"
-                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                    decoding="async"
+                    class="max-w-full max-h-full w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                 />
-                <div v-else class="w-full h-full flex items-center justify-center bg-[var(--color-forest)]/5">
+                <div v-else class="w-full h-full flex items-center justify-center bg-[var(--color-forest)]/5 rounded-lg">
                     <svg class="w-16 h-16 text-[var(--color-forest)]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
@@ -44,12 +51,23 @@ defineProps<{
                 >
                     {{ equipment.description }}
                 </p>
-                <p
-                    v-if="equipment.price"
-                    class="text-base font-semibold text-[var(--color-forest)] mb-3"
-                >
-                    {{ equipment.price }}
-                </p>
+                <div v-if="equipment.price || hasDiscount" class="mb-3 space-y-1.5">
+                    <div v-if="originalPrice" class="text-sm text-[var(--color-warm-gray)]">
+                        <span>UVP: </span>
+                        <span class="line-through">{{ originalPrice }}</span>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span v-if="equipment.price" class="text-base font-semibold text-[var(--color-forest)]">
+                            {{ equipment.price }}
+                        </span>
+                        <span
+                            v-if="hasDiscount"
+                            class="inline-flex items-center rounded-md bg-[var(--color-terracotta)] px-2.5 py-0.5 text-xs font-semibold text-white shadow-sm"
+                        >
+                            {{ discountPercentage ? `Rabatt -${discountPercentage} %` : 'Rabatt' }}
+                        </span>
+                    </div>
+                </div>
                 <a
                     :href="equipment.link"
                     target="_blank"

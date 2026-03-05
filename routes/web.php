@@ -51,6 +51,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::put('/maintenance', [AdminMaintenanceController::class, 'update'])->name('maintenance.update');
 
     Route::get('/equipment', [AdminEquipmentController::class, 'index'])->name('equipment.index');
+    Route::post('/equipment/check-prices', [AdminEquipmentController::class, 'checkPrices'])->name('equipment.check-prices');
     Route::post('/equipment/fetch-from-url', [AdminEquipmentController::class, 'fetchFromUrl'])->name('equipment.fetch-from-url');
     Route::get('/equipment/create', [AdminEquipmentController::class, 'create'])->name('equipment.create');
     Route::post('/equipment', [AdminEquipmentController::class, 'store'])->name('equipment.store');

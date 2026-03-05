@@ -31,6 +31,9 @@ class EquipmentFactory extends Factory
             'link' => fake()->url(),
             'category' => fake()->randomElement(['Messer', 'Töpfe', 'Elektro', 'Backen']),
             'price' => fake()->optional(0.7)->randomElement(['19,99 €', '29,99 €', '49,90 €', null]),
+            'original_price' => null,
+            'discount_percentage' => null,
+            'last_price_checked_at' => null,
         ];
     }
 }
