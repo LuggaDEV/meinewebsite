@@ -187,8 +187,8 @@ async function submit(): Promise<void> {
                     </label>
                     <input
                         v-model="form.background_video_url"
-                        type="url"
-                        placeholder="https://… oder leer lassen und Video hochladen"
+                        type="text"
+                        placeholder="https://… oder Pfad, z. B. /storage/maintenance/…"
                         class="w-full rounded-lg border border-[var(--color-forest)]/20 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-terracotta)]"
                     />
                     <div v-if="errors.background_video_url" class="mt-1 text-sm text-red-600">
