@@ -38,6 +38,18 @@ defineProps<{
                         {{ equipment.category }}
                     </Badge>
                 </div>
+                <p
+                    v-if="equipment.description"
+                    class="text-sm text-[var(--color-warm-gray)] line-clamp-3 mb-3"
+                >
+                    {{ equipment.description }}
+                </p>
+                <p
+                    v-if="equipment.price"
+                    class="text-base font-semibold text-[var(--color-forest)] mb-3"
+                >
+                    {{ equipment.price }}
+                </p>
                 <a
                     :href="equipment.link"
                     target="_blank"

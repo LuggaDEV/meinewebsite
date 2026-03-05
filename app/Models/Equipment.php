@@ -20,5 +20,6 @@ class Equipment extends Model
         'image',
         'link',
         'category',
+        'price',
     ];
 }

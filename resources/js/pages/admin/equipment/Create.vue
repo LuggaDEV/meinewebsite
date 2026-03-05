@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { Link, useForm } from '@inertiajs/vue3'
+import { Link, router, useForm } from '@inertiajs/vue3'
 import AdminLayout from '@/layouts/AdminLayout.vue'
 import Input from '@/components/ui/input/Input.vue'
-import { index, store } from '@/routes/admin/equipment'
+import { index, store, fetchFromUrl } from '@/routes/admin/equipment'
 import Label from '@/components/ui/label/Label.vue'
 import InputError from '@/components/InputError.vue'
 import ImageCropResize from '@/components/admin/ImageCropResize.vue'
+import { ref } from 'vue'
 
 // Vordefinierte Kategorien
 const categories = [
@@ -22,11 +23,71 @@ const form = useForm({
     category: '',
     link: '',
     description: '',
+    price: '',
     image: null as File | null,
+    image_url: null as string | null,
 })
 
+const fetchLoading = ref(false)
+const fetchError = ref<string | null>(null)
+
+async function fillFromLink(): Promise<void> {
+    const url = form.link?.trim()
+    if (!url) {
+        fetchError.value = 'Bitte zuerst einen Link eingeben.'
+        return
+    }
+    try {
+        new URL(url)
+    } catch {
+        fetchError.value = 'Bitte eine gültige URL eingeben.'
+        return
+    }
+    fetchError.value = null
+    fetchLoading.value = true
+    try {
+        const csrfCookie = document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('XSRF-TOKEN='))
+        const csrfToken = csrfCookie
+            ? decodeURIComponent(csrfCookie.split('=')[1] ?? '')
+            : ''
+        const response = await fetch(fetchFromUrl.url(), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                ...(csrfToken && { 'X-XSRF-TOKEN': csrfToken }),
+            },
+            body: JSON.stringify({ url }),
+            credentials: 'same-origin',
+        })
+        const data = await response.json()
+        if (!response.ok) {
+            fetchError.value = data.message ?? 'Die Seite konnte nicht geladen werden.'
+            return
+        }
+        if (data.name) form.name = data.name
+        if (data.description) form.description = data.description
+        if (data.image_url) form.image_url = data.image_url
+        if (data.price) form.price = data.price
+    } catch {
+        fetchError.value = 'Die Seite konnte nicht geladen werden.'
+    } finally {
+        fetchLoading.value = false
+    }
+}
+
+function onImageUpdate(value: File | null): void {
+    form.image = value
+    form.image_url = null
+}
+
 function submit(): void {
-    form.post(store.url(), {
+    form.transform((data) => {
+        const { image_url, ...rest } = data
+        return image_url ? { ...rest, image_url } : rest
+    }).post(store.url(), {
         forceFormData: true,
         preserveScroll: true,
         onSuccess: () => {
@@ -39,6 +100,33 @@ function submit(): void {
 <template>
     <AdminLayout title="Neues Equipment" subtitle="Neues Küchenequipment anlegen">
         <form @submit.prevent="submit" class="max-w-2xl rounded-xl border border-[var(--color-forest)]/10 bg-white p-6 shadow-sm md:p-8 space-y-6">
+                    <!-- Link + Von Link ausfüllen -->
+                    <div>
+                        <Label for="link">Link (URL) *</Label>
+                        <div class="mt-2 flex flex-col sm:flex-row gap-2">
+                            <Input
+                                id="link"
+                                v-model="form.link"
+                                type="url"
+                                class="flex-1"
+                                placeholder="https://..."
+                                required
+                            />
+                            <button
+                                type="button"
+                                :disabled="fetchLoading"
+                                class="rounded-lg border border-[var(--color-forest)]/20 bg-[var(--color-cream)] px-4 py-2.5 text-sm font-medium text-[var(--color-forest)] transition-colors hover:bg-[var(--color-forest)]/5 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                                @click="fillFromLink"
+                            >
+                                {{ fetchLoading ? 'Laden…' : 'Von Link ausfüllen' }}
+                            </button>
+                        </div>
+                        <p v-if="fetchError" class="mt-2 text-sm text-red-600">
+                            {{ fetchError }}
+                        </p>
+                        <InputError :message="form.errors.link" class="mt-2" />
+                    </div>
+
                     <!-- Name -->
                     <div>
                         <Label for="name">Name *</Label>
@@ -69,19 +157,6 @@ function submit(): void {
                         <InputError :message="form.errors.category" class="mt-2" />
                     </div>
 
-                    <!-- Link -->
-                    <div>
-                        <Label for="link">Link (URL) *</Label>
-                        <Input
-                            id="link"
-                            v-model="form.link"
-                            type="url"
-                            placeholder="https://..."
-                            required
-                        />
-                        <InputError :message="form.errors.link" class="mt-2" />
-                    </div>
-
                     <!-- Beschreibung (optional) -->
                     <div>
                         <Label for="description">Beschreibung (optional)</Label>
@@ -90,9 +165,21 @@ function submit(): void {
                             v-model="form.description"
                             rows="3"
                             class="w-full rounded-md border-[var(--color-forest)]/20 focus:border-[var(--color-forest)] focus:ring focus:ring-[var(--color-forest)]/10"
-                            placeholder="Optionale Beschreibung für interne Notizen..."
+                            placeholder="Kurze Beschreibung, wird auf der Equipment-Seite angezeigt."
                         />
                         <InputError :message="form.errors.description" class="mt-2" />
+                    </div>
+
+                    <!-- Preis (optional) -->
+                    <div>
+                        <Label for="price">Preis (optional)</Label>
+                        <Input
+                            id="price"
+                            v-model="form.price"
+                            type="text"
+                            placeholder="z.B. 29,99 €"
+                        />
+                        <InputError :message="form.errors.price" class="mt-2" />
                     </div>
 
                     <!-- Bild Upload -->
@@ -101,10 +188,12 @@ function submit(): void {
                         <div class="mt-2">
                             <ImageCropResize
                                 :model-value="form.image"
-                                @update:model-value="form.image = $event"
+                                :existing-image-url="form.image_url"
+                                :key="String(!!form.image_url)"
+                                @update:model-value="onImageUpdate"
                             />
                         </div>
-                        <InputError :message="form.errors.image" class="mt-2" />
+                        <InputError :message="form.errors.image ?? form.errors.image_url" class="mt-2" />
                     </div>
 
                     <!-- Action Buttons -->

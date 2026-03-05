@@ -5,6 +5,7 @@ export interface Equipment {
     image: string | null
     link: string
     category: string
+    price: string | null
     created_at: string
     updated_at: string
 }

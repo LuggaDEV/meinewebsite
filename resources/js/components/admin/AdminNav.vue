@@ -3,15 +3,17 @@ import { Link } from '@inertiajs/vue3'
 import {
     BookOpen,
     ChefHat,
+    Settings,
     Star,
     User,
-    Settings,
+    Wrench,
 } from 'lucide-vue-next'
 import { useCurrentUrl } from '@/composables/useCurrentUrl'
 import { index as adminRecipesIndex } from '@/routes/admin/recipes'
 import { index as adminReviewsIndex } from '@/routes/admin/reviews'
 import { index as adminEquipmentIndex } from '@/routes/admin/equipment'
 import { edit as adminAboutEdit } from '@/routes/admin/about'
+import { edit as adminMaintenanceEdit } from '@/routes/admin/maintenance'
 import { edit as profileEdit } from '@/routes/profile'
 
 const { currentUrl } = useCurrentUrl()
@@ -29,6 +31,7 @@ const navLinks = [
     { label: 'Bewertungen', href: adminReviewsIndex.url(), icon: Star, match: '/admin/reviews' },
     { label: 'Equipment', href: adminEquipmentIndex.url(), icon: ChefHat, match: '/admin/equipment' },
     { label: 'Über Mich', href: adminAboutEdit.url(), icon: User, match: '/admin/about' },
+    { label: 'Wartung', href: adminMaintenanceEdit.url(), icon: Wrench, match: '/admin/maintenance' },
     { label: 'Einstellungen', href: profileEdit.url(), icon: Settings, match: '/user/profile' },
 ] as const
 

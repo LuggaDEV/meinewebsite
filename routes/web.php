@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AboutController as AdminAboutController;
 use App\Http\Controllers\Admin\EquipmentController as AdminEquipmentController;
+use App\Http\Controllers\Admin\MaintenanceController as AdminMaintenanceController;
 use App\Http\Controllers\Admin\RecipeController as AdminRecipeController;
 use App\Http\Controllers\Admin\RecipeReviewController as AdminRecipeReviewController;
 use App\Http\Controllers\EquipmentController;
@@ -46,7 +47,11 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/about/edit', [AdminAboutController::class, 'edit'])->name('about.edit');
     Route::put('/about', [AdminAboutController::class, 'update'])->name('about.update');
 
+    Route::get('/maintenance', [AdminMaintenanceController::class, 'edit'])->name('maintenance.edit');
+    Route::put('/maintenance', [AdminMaintenanceController::class, 'update'])->name('maintenance.update');
+
     Route::get('/equipment', [AdminEquipmentController::class, 'index'])->name('equipment.index');
+    Route::post('/equipment/fetch-from-url', [AdminEquipmentController::class, 'fetchFromUrl'])->name('equipment.fetch-from-url');
     Route::get('/equipment/create', [AdminEquipmentController::class, 'create'])->name('equipment.create');
     Route::post('/equipment', [AdminEquipmentController::class, 'store'])->name('equipment.store');
     Route::get('/equipment/{equipment}/edit', [AdminEquipmentController::class, 'edit'])->name('equipment.edit');
