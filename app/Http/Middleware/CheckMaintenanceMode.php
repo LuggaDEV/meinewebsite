@@ -63,9 +63,12 @@ class CheckMaintenanceMode
             $endsAtValue = $endsAt->toIso8601String();
         }
 
+        $backgroundVideoUrl = $this->maintenance->getBackgroundVideoUrl();
+
         return Inertia::render('Maintenance', [
             'message' => $this->maintenance->getMessage(),
             'endsAt' => $endsAtValue,
+            'backgroundVideoUrl' => $backgroundVideoUrl,
         ])->toResponse($request);
     }
 

@@ -3,10 +3,14 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { Link, router } from '@inertiajs/vue3'
 import { Motion } from 'motion-v'
 
-const props = defineProps<{
-    message: string | null
-    endsAt: string | null
-}>()
+const props = withDefaults(
+    defineProps<{
+        message: string | null
+        endsAt: string | null
+        backgroundVideoUrl?: string | null
+    }>(),
+    { backgroundVideoUrl: null }
+)
 
 const now = ref(Date.now())
 let tick: ReturnType<typeof setInterval> | null = null
@@ -63,8 +67,18 @@ onUnmounted(() => {
 
 <template>
     <div class="maintenance-page flex min-h-screen flex-col bg-[var(--color-cream)]">
+        <div v-if="backgroundVideoUrl" class="video-bg" aria-hidden="true">
+            <video
+                class="video-bg__video"
+                autoplay
+                muted
+                loop
+                playsinline
+                :src="backgroundVideoUrl"
+            />
+        </div>
         <div class="hero-bg" aria-hidden="true" />
-        <main class="relative flex w-full flex-1 flex-col items-center justify-center px-4 py-12 sm:py-16">
+        <main class="relative z-10 flex w-full flex-1 flex-col items-center justify-center px-4 py-12 sm:py-16">
             <Motion
                 :initial="{ opacity: 0, y: 24, scale: 0.96 }"
                 :animate="{ opacity: 1, y: 0, scale: 1 }"
@@ -206,10 +220,23 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.hero-bg {
+.video-bg {
     position: fixed;
     inset: 0;
     z-index: 0;
+    overflow: hidden;
+}
+.video-bg__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(12px);
+    transform: scale(1.08);
+}
+.hero-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
     background:
         radial-gradient(ellipse 120% 80% at 50% -20%, rgba(45, 74, 62, 0.08) 0%, transparent 50%),
         radial-gradient(ellipse 80% 50% at 80% 80%, rgba(196, 112, 74, 0.06) 0%, transparent 50%),

@@ -14,6 +14,8 @@ class MaintenanceService
 
     private const KEY_MESSAGE = 'maintenance.message';
 
+    private const KEY_BACKGROUND_VIDEO_URL = 'maintenance.background_video_url';
+
     public function isEnabled(): bool
     {
         if (! (bool) Cache::get(self::KEY_ENABLED, false)) {
@@ -46,10 +48,18 @@ class MaintenanceService
         return $value === null || $value === '' ? null : (string) $value;
     }
 
-    public function set(bool $enabled, ?CarbonInterface $endsAt = null, ?string $message = null): void
+    public function getBackgroundVideoUrl(): ?string
+    {
+        $value = Cache::get(self::KEY_BACKGROUND_VIDEO_URL);
+
+        return $value === null || $value === '' ? null : (string) $value;
+    }
+
+    public function set(bool $enabled, ?CarbonInterface $endsAt = null, ?string $message = null, ?string $backgroundVideoUrl = null): void
     {
         Cache::put(self::KEY_ENABLED, $enabled);
         Cache::put(self::KEY_ENDS_AT, $endsAt);
         Cache::put(self::KEY_MESSAGE, $message ?? '');
+        Cache::put(self::KEY_BACKGROUND_VIDEO_URL, $backgroundVideoUrl ?? '');
     }
 }

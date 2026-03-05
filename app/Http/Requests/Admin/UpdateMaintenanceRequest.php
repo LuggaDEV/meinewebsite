@@ -20,6 +20,8 @@ class UpdateMaintenanceRequest extends FormRequest
             'enabled' => ['required', 'boolean'],
             'ends_at' => ['nullable', 'date', 'after:now'],
             'message' => ['nullable', 'string', 'max:2000'],
+            'background_video_url' => ['nullable', 'string', 'max:2000'],
+            'background_video' => ['nullable', 'file', 'mimetypes:video/mp4,video/webm', 'max:51200'],
         ];
     }
 }
