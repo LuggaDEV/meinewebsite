@@ -27,7 +27,7 @@ class MaintenanceController extends Controller
 
         return Inertia::render('admin/maintenance/Edit', [
             'enabled' => $this->maintenance->isEnabled(),
-            'ends_at' => $endsAt?->toIso8601String(),
+            'ends_at' => $endsAt?->timezone('Europe/Berlin')->toIso8601String(),
             'message' => $this->maintenance->getMessage(),
         ]);
     }
@@ -42,7 +42,7 @@ class MaintenanceController extends Controller
         $validated = $request->validated();
 
         $endsAt = isset($validated['ends_at'])
-            ? \Carbon\CarbonImmutable::parse($validated['ends_at'])
+            ? \Carbon\CarbonImmutable::parse($validated['ends_at'], 'Europe/Berlin')
             : null;
 
         $this->maintenance->set(

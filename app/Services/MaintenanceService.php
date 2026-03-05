@@ -16,7 +16,16 @@ class MaintenanceService
 
     public function isEnabled(): bool
     {
-        return (bool) Cache::get(self::KEY_ENABLED, false);
+        if (! (bool) Cache::get(self::KEY_ENABLED, false)) {
+            return false;
+        }
+
+        $endsAt = $this->getEndsAt();
+        if ($endsAt === null) {
+            return true;
+        }
+
+        return $endsAt->isFuture();
     }
 
     public function getEndsAt(): ?CarbonInterface
