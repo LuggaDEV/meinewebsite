@@ -88,8 +88,8 @@ class RecipeController extends Controller
             'body' => $r->body,
             'author_name' => $r->author_name,
             'reply' => $r->reply,
-            'replied_at' => $r->replied_at?->toISOString(),
-            'created_at' => $r->created_at->toISOString(),
+            'replied_at' => $r->replied_at?->toIso8601String(),
+            'created_at' => $r->created_at->toIso8601String(),
             'user' => $r->user
                 ? ['id' => $r->user->id, 'name' => $r->user->name]
                 : null,
@@ -122,19 +122,16 @@ class RecipeController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            // Altes Bild löschen, falls vorhanden
             if ($recipe->image) {
                 Storage::disk('public')->delete($recipe->image);
             }
             $validated['image'] = $request->file('image')->store('recipes', 'public');
         } elseif ($request->has('image') && $request->input('image') === null) {
-            // Bild explizit entfernen
             if ($recipe->image) {
                 Storage::disk('public')->delete($recipe->image);
             }
             $validated['image'] = null;
         } else {
-            // Wenn kein neues Bild hochgeladen wurde, das alte Bild beibehalten
             unset($validated['image']);
         }
 
@@ -150,7 +147,6 @@ class RecipeController extends Controller
     public function destroy(Recipe $recipe): RedirectResponse
     {
         Gate::authorize('delete', $recipe);
-        // Bild löschen, falls vorhanden
         if ($recipe->image) {
             Storage::disk('public')->delete($recipe->image);
         }

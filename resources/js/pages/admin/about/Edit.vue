@@ -49,12 +49,11 @@ function clearImage(): void {
 
 function submit(): void {
     form.transform((data) => {
-        const transformed: any = { ...data }
-        // Wenn Bild entfernt wurde, explizit null senden
+        const transformed: Record<string, unknown> = { ...data }
         if (imageRemoved.value) {
-            transformed.image = null
+            transformed.remove_image = true
+            delete transformed.image
         } else if (!form.image) {
-            // Wenn kein neues Bild ausgewählt wurde, Feld nicht senden (altes Bild bleibt)
             delete transformed.image
         }
         return transformed
