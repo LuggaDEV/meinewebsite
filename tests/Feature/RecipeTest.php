@@ -3,6 +3,8 @@
 use App\Models\Recipe;
 use App\Models\RecipeReview;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
@@ -15,6 +17,66 @@ test('guests can view recipes index', function (): void {
         ->assertInertia(fn ($page) => $page
             ->component('recipes/Index')
             ->has('recipes', 3)
+            ->has('instagramFeed')
+        );
+});
+
+test('recipes index includes instagramFeed as empty array when not configured', function (): void {
+    config(['services.instagram.access_token' => null]);
+    Cache::forget('instagram_feed');
+
+    get('/')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('recipes/Index')
+            ->has('instagramFeed', 0)
+        );
+});
+
+test('recipes index includes instagramFeed from Graph API when configured', function (): void {
+    config(['services.instagram.access_token' => 'fake-token']);
+    Cache::forget('instagram_feed');
+
+    Http::fake([
+        'graph.instagram.com/*' => Http::response([
+            'data' => [
+                [
+                    'id' => 'media-1',
+                    'media_type' => 'IMAGE',
+                    'media_url' => 'https://example.com/img1.jpg',
+                    'permalink' => 'https://www.instagram.com/p/abc/',
+                    'caption' => 'Test post',
+                ],
+            ],
+        ], 200),
+    ]);
+
+    get('/')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('recipes/Index')
+            ->has('instagramFeed', 1)
+            ->where('instagramFeed.0.id', 'media-1')
+            ->where('instagramFeed.0.media_url', 'https://example.com/img1.jpg')
+            ->where('instagramFeed.0.permalink', 'https://www.instagram.com/p/abc/')
+            ->where('instagramFeed.0.caption', 'Test post')
+            ->where('instagramFeed.0.media_type', 'IMAGE')
+        );
+});
+
+test('recipes index returns empty instagramFeed when Graph API fails', function (): void {
+    config(['services.instagram.access_token' => 'fake-token']);
+    Cache::forget('instagram_feed');
+
+    Http::fake([
+        'graph.instagram.com/*' => Http::response(['error' => 'Invalid token'], 401),
+    ]);
+
+    get('/')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('recipes/Index')
+            ->has('instagramFeed', 0)
         );
 });
 

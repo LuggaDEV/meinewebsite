@@ -1,16 +1,31 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3'
 import { Motion } from 'motion-v'
+import type { InstagramPost } from '@/types/instagram'
 
 const instagramUrl = 'https://www.instagram.com/luca_themann/'
 
 defineProps<{
-    recipes: Array<{
-        id: number
-        title: string
-        image: string | null
-    }>
+    feed: InstagramPost[]
 }>()
+
+const PREVIEW_AT_SECONDS = 5
+
+function useFifthSecondAsPreview(el: EventTarget | null): void {
+    const video = el as HTMLVideoElement | null
+    if (!video) return
+    const duration = video.duration
+    const targetTime =
+        Number.isFinite(duration) && duration >= PREVIEW_AT_SECONDS
+            ? PREVIEW_AT_SECONDS
+            : duration > 0
+              ? duration / 2
+              : 0
+    video.currentTime = targetTime
+}
+
+function pauseAfterSeek(el: EventTarget | null): void {
+    (el as HTMLVideoElement | null)?.pause()
+}
 </script>
 
 <template>
@@ -29,35 +44,43 @@ defineProps<{
                     Aktuelle Kreationen und Einblicke hinter die Kulissen.
                 </p>
             </Motion>
-            <div v-if="recipes.length === 0" class="text-center text-[var(--color-warm-gray)] py-8">
-                Noch keine Rezepte vorhanden.
+            <div v-if="feed.length === 0" class="text-center text-[var(--color-warm-gray)] py-8">
+                Derzeit keine Posts sichtbar.
             </div>
             <div v-else class="flex flex-wrap justify-center gap-2 md:gap-4">
                 <Motion
-                    v-for="(recipe, i) in recipes"
-                    :key="recipe.id"
+                    v-for="(post, i) in feed"
+                    :key="post.id"
                     :initial="{ opacity: 0, scale: 0.9 }"
                     :in-view="{ opacity: 1, scale: 1 }"
                     :transition="{ duration: 0.4, delay: i * 0.1, ease: 'easeOut' }"
                     :viewport="{ once: true, margin: '-50px' }"
                     class="w-[calc(50%-0.25rem)] sm:w-[calc(33.333%-0.67rem)] md:w-[calc(25%-0.75rem)] lg:w-[calc(16.666%-0.83rem)] max-w-[200px]"
                 >
-                    <Link
-                        :href="`/recipe/${recipe.id}`"
+                    <a
+                        :href="post.permalink"
+                        target="_blank"
+                        rel="noopener noreferrer"
                         class="block aspect-square overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow focus:outline-none focus:ring-2 focus:ring-[var(--color-terracotta)] group w-full"
                     >
+                        <video
+                            v-if="post.media_type === 'VIDEO' && post.video_url"
+                            :src="post.video_url"
+                            muted
+                            loop
+                            playsinline
+                            preload="auto"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            @loadedmetadata="useFifthSecondAsPreview($event.target)"
+                            @seeked="pauseAfterSeek($event.target)"
+                        />
                         <img
-                            v-if="recipe.image"
-                            :src="recipe.image"
-                            :alt="recipe.title"
+                            v-else
+                            :src="post.media_url"
+                            :alt="post.caption ?? 'Instagram Post'"
                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
-                        <div v-else class="w-full h-full flex items-center justify-center bg-[var(--color-forest)]/5">
-                            <svg class="w-12 h-12 text-[var(--color-forest)]/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                        </div>
-                    </Link>
+                    </a>
                 </Motion>
             </div>
             <div class="mt-10 text-center">

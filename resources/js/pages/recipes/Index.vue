@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import RecipeLayout from '@/layouts/RecipeLayout.vue'
 import HeroSection from '@/components/recipe/HeroSection.vue'
 import RecipesSection from '@/components/recipe/RecipesSection.vue'
 import AboutSection from '@/components/recipe/AboutSection.vue'
 import InstagramSection from '@/components/recipe/InstagramSection.vue'
 import type { Recipe } from '@/types/recipe'
+import type { InstagramPost } from '@/types/instagram'
 
-const props = defineProps<{
+defineProps<{
     recipes: Recipe[]
     about: {
         id?: number
@@ -15,15 +15,8 @@ const props = defineProps<{
         content: string
         image: string | null
     } | null
+    instagramFeed: InstagramPost[]
 }>()
-
-// Für Instagram-Sektion: letzte 6 Rezepte mit Bild (oder alle mit Bild, wenn weniger vorhanden)
-const instagramRecipes = computed(() => {
-    return props.recipes
-        .filter((recipe) => Boolean(recipe.image))
-        .slice(-6)
-        .reverse()
-})
 </script>
 
 <template>
@@ -31,6 +24,6 @@ const instagramRecipes = computed(() => {
         <HeroSection />
         <RecipesSection :recipes="recipes" />
         <AboutSection :about="about" />
-        <InstagramSection :recipes="instagramRecipes" />
+        <InstagramSection :feed="instagramFeed" />
     </RecipeLayout>
 </template>
