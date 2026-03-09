@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\RecipeController as AdminRecipeController;
 use App\Http\Controllers\Admin\RecipeReviewController as AdminRecipeReviewController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\RecipeExportController;
 use App\Http\Controllers\RecipeReviewController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -14,6 +15,8 @@ use Inertia\Inertia;
 Route::get('/', [RecipeController::class, 'index'])->name('home');
 
 Route::get('/recipe/{recipe}', [RecipeController::class, 'show'])->name('recipes.show');
+
+Route::get('/recipe/{recipe}/export/json', [RecipeExportController::class, 'json'])->name('recipes.export.json');
 
 Route::post('/recipe/{recipe}/reviews', [RecipeReviewController::class, 'store'])->name('recipes.reviews.store');
 

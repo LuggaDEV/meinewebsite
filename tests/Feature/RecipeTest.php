@@ -113,6 +113,40 @@ test('guests can view a recipe', function (): void {
         );
 });
 
+test('guests can export a recipe as schema.org JSON', function (): void {
+    $recipe = Recipe::factory()->create([
+        'title' => 'Apfelkuchen',
+        'description' => 'Ein leckerer Kuchen.',
+        'servings' => 8,
+        'prep_time' => 30,
+        'cook_time' => 45,
+        'rest_time' => 60,
+        'ingredients' => ['500g Äpfel', '200g Mehl'],
+        'instructions' => ['Äpfel schälen.', 'Alles mischen und backen.'],
+    ]);
+
+    $response = get("/recipe/{$recipe->id}/export/json")
+        ->assertOk()
+        ->assertHeader('Content-Type', 'application/json')
+        ->assertHeader('Content-Disposition', 'attachment; filename="apfelkuchen-rezept.json"');
+
+    $data = $response->json();
+    expect($data)
+        ->toHaveKeys(['@context', '@type', 'name', 'description', 'recipeIngredient', 'recipeInstructions'])
+        ->and($data['@context'])->toBe('https://schema.org')
+        ->and($data['@type'])->toBe('Recipe')
+        ->and($data['name'])->toBe('Apfelkuchen')
+        ->and($data['description'])->toBe('Ein leckerer Kuchen.')
+        ->and($data['recipeYield'])->toBe('8')
+        ->and($data['prepTime'])->toBe('PT30M')
+        ->and($data['cookTime'])->toBe('PT45M')
+        ->and($data['restTime'])->toBe('PT1H')
+        ->and($data['recipeIngredient'])->toBe(['500g Äpfel', '200g Mehl'])
+        ->and($data['recipeInstructions'])->toHaveCount(2)
+        ->and($data['recipeInstructions'][0])->toMatchArray(['@type' => 'HowToStep', 'text' => 'Äpfel schälen.'])
+        ->and($data['recipeInstructions'][1])->toMatchArray(['@type' => 'HowToStep', 'text' => 'Alles mischen und backen.']);
+});
+
 test('admin recipe edit includes reviews', function (): void {
     $user = User::factory()->create();
     $recipe = Recipe::factory()->create();

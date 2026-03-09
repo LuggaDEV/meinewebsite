@@ -158,6 +158,10 @@ document.addEventListener('visibilitychange', async () => {
         }
     }
 })
+
+function printRecipe(): void {
+    window.print()
+}
 </script>
 
 <template>
@@ -173,16 +177,39 @@ document.addEventListener('visibilitychange', async () => {
                     :initial="{ opacity: 0, x: -20 }"
                     :animate="{ opacity: 1, x: 0 }"
                     :transition="{ duration: 0.4, delay: 0.1 }"
+                    class="mb-8 flex flex-wrap items-center gap-4"
                 >
                     <Link
                         href="/"
-                        class="mb-8 inline-flex items-center gap-2 text-[var(--color-forest)] hover:text-[var(--color-terracotta)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-terracotta)] focus-visible:ring-offset-2 rounded"
+                        class="no-print inline-flex items-center gap-2 text-[var(--color-forest)] hover:text-[var(--color-terracotta)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-terracotta)] focus-visible:ring-offset-2 rounded"
                     >
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                         </svg>
                         Zurück zu den Rezepten
                     </Link>
+                    <div class="no-print flex items-center gap-2">
+                        <button
+                            type="button"
+                            @click="printRecipe"
+                            class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-[var(--color-forest)] bg-[var(--color-cream)] border border-[var(--color-forest)]/20 rounded-lg hover:border-[var(--color-terracotta)]/50 hover:text-[var(--color-terracotta)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-terracotta)] focus-visible:ring-offset-2"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h12z" />
+                            </svg>
+                            Drucken
+                        </button>
+                        <a
+                            :href="`/recipe/${recipe.id}/export/json`"
+                            download
+                            class="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-[var(--color-forest)] bg-[var(--color-cream)] border border-[var(--color-forest)]/20 rounded-lg hover:border-[var(--color-terracotta)]/50 hover:text-[var(--color-terracotta)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-terracotta)] focus-visible:ring-offset-2"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            Als JSON exportieren
+                        </a>
+                    </div>
                 </Motion>
 
                 <article>
@@ -207,7 +234,7 @@ document.addEventListener('visibilitychange', async () => {
                         :initial="{ opacity: 0, y: 10 }"
                         :animate="{ opacity: 1, y: 0 }"
                         :transition="{ duration: 0.3, delay: 0.25 }"
-                        class="mb-6 md:hidden"
+                        class="no-print mb-6 md:hidden"
                     >
                         <label class="flex items-center gap-3 p-4 bg-[var(--color-cream)] rounded-lg border-2 border-[var(--color-terracotta)]/30 cursor-pointer hover:border-[var(--color-terracotta)]/50 transition-colors">
                             <input
@@ -325,7 +352,7 @@ document.addEventListener('visibilitychange', async () => {
                         :initial="{ opacity: 0, y: 20 }"
                         :animate="{ opacity: 1, y: 0 }"
                         :transition="{ duration: 0.5, delay: 0.5 }"
-                        class="mt-12 pt-8 border-t border-[var(--color-forest)]/10"
+                        class="no-print mt-12 pt-8 border-t border-[var(--color-forest)]/10"
                     >
                         <h2 class="font-heading text-2xl md:text-3xl font-semibold text-[var(--color-forest)] mb-6">
                             Bewertungen & Rezensionen

@@ -11,10 +11,22 @@ defineProps<{
 
 <template>
     <div class="min-h-screen flex flex-col">
-        <AppHeader />
+        <div class="no-print">
+            <AppHeader />
+        </div>
         <main class="flex-1">
             <slot />
         </main>
-        <AppFooter />
+        <div class="no-print">
+            <AppFooter />
+        </div>
     </div>
 </template>
+
+<style>
+@media print {
+    .no-print {
+        display: none !important;
+    }
+}
+</style>
