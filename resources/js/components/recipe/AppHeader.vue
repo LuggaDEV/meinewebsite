@@ -7,7 +7,6 @@ const mobileMenuOpen = ref(false)
 const navLinks = [
     { label: 'STARTSEITE', to: '/' },
     { label: 'REZEPTE', to: '/#recipes' },
-    { label: 'EQUIPMENT', to: '/equipment' },
     { label: 'ÜBER MICH', to: '/#about' },
 ]
 
