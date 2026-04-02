@@ -29,7 +29,7 @@ function pauseAfterSeek(el: EventTarget | null): void {
 </script>
 
 <template>
-    <section id="instagram" class="py-16 md:py-24 bg-white/50">
+    <section id="instagram" class="border-t border-[var(--color-forest)]/[0.06] bg-gradient-to-b from-white to-[var(--color-cream)] py-16 md:py-24">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <Motion
                 :initial="{ opacity: 0, y: 20 }"
@@ -37,7 +37,10 @@ function pauseAfterSeek(el: EventTarget | null): void {
                 :transition="{ duration: 0.6, ease: 'easeOut' }"
                 :viewport="{ once: true }"
             >
-                <h2 class="font-heading text-3xl md:text-4xl font-semibold text-[var(--color-forest)] text-center mb-4">
+                <p class="mb-3 text-center text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-terracotta)]">
+                    Social
+                </p>
+                <h2 class="mb-4 text-center font-heading text-3xl font-semibold text-[var(--color-forest)] md:text-4xl">
                     Folge mir auf Instagram
                 </h2>
                 <p class="text-center text-[var(--color-warm-gray)] mb-12 max-w-xl mx-auto">
@@ -61,7 +64,7 @@ function pauseAfterSeek(el: EventTarget | null): void {
                         :href="post.permalink"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="block aspect-square overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow focus:outline-none focus:ring-2 focus:ring-[var(--color-terracotta)] group w-full"
+                        class="group block aspect-square w-full overflow-hidden rounded-xl shadow-sm ring-1 ring-[var(--color-forest)]/[0.06] transition-shadow hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[var(--color-terracotta)]"
                     >
                         <video
                             v-if="post.media_type === 'VIDEO' && post.video_url"

@@ -152,7 +152,10 @@ function clearAllFilters() {
                 :transition="{ duration: 0.6, ease: 'easeOut' }"
                 :viewport="{ once: true }"
             >
-                <h2 class="font-heading text-3xl md:text-4xl font-semibold text-[var(--color-forest)] dark:text-foreground text-center mb-12">
+                <p class="mb-3 text-center text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-terracotta)]">
+                    Entdecken
+                </p>
+                <h2 class="mb-12 text-center font-heading text-3xl font-semibold text-[var(--color-forest)] md:text-4xl dark:text-foreground">
                     Rezepte
                 </h2>
             </Motion>

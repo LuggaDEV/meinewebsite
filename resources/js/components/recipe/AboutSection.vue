@@ -12,7 +12,7 @@ defineProps<{
 </script>
 
 <template>
-    <section id="about" class="py-16 md:py-24 bg-white/50">
+    <section id="about" class="border-t border-[var(--color-forest)]/[0.06] bg-white/80 py-16 md:py-24">
         <Motion
             :initial="{ opacity: 0, y: 30 }"
             :in-view="{ opacity: 1, y: 0 }"
@@ -20,7 +20,10 @@ defineProps<{
             :viewport="{ once: true, margin: '-100px' }"
             class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8"
         >
-            <h2 class="font-heading text-3xl md:text-4xl font-semibold text-[var(--color-forest)] mb-10 text-center">
+            <p class="mb-3 text-center text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-terracotta)]">
+                Portrait
+            </p>
+            <h2 class="mb-10 text-center font-heading text-3xl font-semibold text-[var(--color-forest)] md:text-4xl">
                 {{ about?.title || 'Über mich' }}
             </h2>
 
@@ -33,7 +36,7 @@ defineProps<{
                     :viewport="{ once: true }"
                     class="flex-shrink-0 w-full md:w-64 lg:w-80"
                 >
-                    <div class="aspect-square overflow-hidden rounded-xl shadow-lg border-4 border-[var(--color-forest)]/10 bg-gradient-to-br from-[var(--color-cream)] to-[var(--color-forest)]/10 flex items-center justify-center">
+                    <div class="flex aspect-square items-center justify-center overflow-hidden rounded-2xl border border-[var(--color-forest)]/10 bg-gradient-to-br from-[var(--color-cream)] to-[var(--color-terracotta)]/[0.06] shadow-lg ring-1 ring-[var(--color-forest)]/[0.04]">
                         <div v-if="about.image" class="w-full h-full">
                             <img
                                 :src="about.image"

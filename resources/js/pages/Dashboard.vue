@@ -1,9 +1,16 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
+import { ExternalLink, Shield } from 'lucide-vue-next';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { dashboard } from '@/routes';
+import {
+    Card,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { index as adminIndex } from '@/routes/admin';
+import { dashboard, home } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
-import PlaceholderPattern from '../components/PlaceholderPattern.vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -17,30 +24,44 @@ const breadcrumbs: BreadcrumbItem[] = [
     <Head title="Dashboard" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div
-            class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4"
-        >
-            <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-                <div
-                    class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
-                >
-                    <PlaceholderPattern />
-                </div>
-                <div
-                    class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
-                >
-                    <PlaceholderPattern />
-                </div>
-                <div
-                    class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
-                >
-                    <PlaceholderPattern />
-                </div>
+        <div class="flex flex-col gap-6 p-4">
+            <div>
+                <h2 class="text-lg font-semibold text-foreground">
+                    Willkommen
+                </h2>
+                <p class="mt-1 text-sm text-muted-foreground">
+                    Schnellzugriff auf deine Website und die Verwaltung.
+                </p>
             </div>
-            <div
-                class="relative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border"
-            >
-                <PlaceholderPattern />
+            <div class="grid gap-4 sm:grid-cols-2">
+                <Link :href="home()" class="block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                    <Card class="h-full transition-shadow hover:shadow-md">
+                        <CardHeader>
+                            <div class="mb-2 flex items-center gap-2 text-primary">
+                                <ExternalLink class="size-5" />
+                                <CardTitle class="text-base">Website</CardTitle>
+                            </div>
+                            <CardDescription>
+                                Öffentliche Startseite mit Rezepten ansehen.
+                            </CardDescription>
+                        </CardHeader>
+                    </Card>
+                </Link>
+                <Link :href="adminIndex()" class="block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                    <Card class="h-full transition-shadow hover:shadow-md">
+                        <CardHeader>
+                            <div class="mb-2 flex items-center gap-2 text-primary">
+                                <Shield class="size-5" />
+                                <CardTitle class="text-base">
+                                    Verwaltung
+                                </CardTitle>
+                            </div>
+                            <CardDescription>
+                                Rezepte, Bewertungen und Inhalte bearbeiten.
+                            </CardDescription>
+                        </CardHeader>
+                    </Card>
+                </Link>
             </div>
         </div>
     </AppLayout>

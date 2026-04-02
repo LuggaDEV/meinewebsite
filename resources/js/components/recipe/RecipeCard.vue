@@ -21,8 +21,8 @@ defineProps<{
         :transition="{ duration: 0.5, ease: 'easeOut' }"
         :viewport="{ once: true, margin: '-50px' }"
     >
-        <article class="group bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow overflow-hidden border border-[var(--color-forest)]/5 w-full">
-            <Link :href="`/recipe/${recipe.id}`" class="block focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-terracotta)] focus-visible:ring-offset-2 rounded-xl">
+        <article class="group w-full overflow-hidden rounded-2xl border border-[var(--color-forest)]/8 bg-white shadow-sm ring-1 ring-[var(--color-forest)]/[0.04] transition-shadow duration-300 hover:shadow-lg">
+            <Link :href="`/recipe/${recipe.id}`" class="block rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-terracotta)] focus-visible:ring-offset-2">
                 <div class="aspect-[4/3] overflow-hidden bg-[var(--color-forest)]/5">
                     <img
                         v-if="recipe.image"

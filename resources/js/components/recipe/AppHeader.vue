@@ -5,9 +5,9 @@ import { Link } from '@inertiajs/vue3'
 const mobileMenuOpen = ref(false)
 
 const navLinks = [
-    { label: 'STARTSEITE', to: '/' },
-    { label: 'REZEPTE', to: '/#recipes' },
-    { label: 'ÜBER MICH', to: '/#about' },
+    { label: 'Startseite', to: '/' },
+    { label: 'Rezepte', to: '/#recipes' },
+    { label: 'Über mich', to: '/#about' },
 ]
 
 function toggleMobileMenu(): void {
@@ -34,25 +34,25 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <header class="sticky top-0 z-50 w-full bg-[var(--color-cream)]/95 backdrop-blur-sm border-b border-[var(--color-forest)]/10">
+    <header class="sticky top-0 z-50 w-full border-b border-[var(--color-forest)]/10 bg-[var(--color-cream)]/90 backdrop-blur-md supports-[backdrop-filter]:bg-[var(--color-cream)]/80">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 md:h-20">
                 <Link href="/" class="font-heading text-xl md:text-2xl font-semibold text-[var(--color-forest)] hover:text-[var(--color-terracotta)] transition-colors" @click="closeMobileMenu">
                     Luca Themann
                 </Link>
 
-                <nav class="hidden md:flex items-center gap-8">
+                <nav class="hidden items-center gap-1 md:flex">
                     <Link
                         v-for="link in navLinks"
                         :key="link.label"
                         :href="link.to"
-                        class="text-sm font-medium uppercase tracking-wider text-[var(--color-forest)]/80 hover:text-[var(--color-terracotta)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-terracotta)] focus-visible:ring-offset-2 rounded"
+                        class="rounded-full px-3 py-2 text-sm font-medium text-[var(--color-forest)]/85 transition-colors hover:bg-[var(--color-forest)]/5 hover:text-[var(--color-terracotta)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-terracotta)] focus-visible:ring-offset-2"
                     >
                         {{ link.label }}
                     </Link>
                     <Link
                         href="/admin"
-                        class="p-2 rounded-lg text-[var(--color-forest)]/80 hover:text-[var(--color-terracotta)] hover:bg-[var(--color-forest)]/5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-terracotta)] focus-visible:ring-offset-2"
+                        class="rounded-full p-2 text-[var(--color-forest)]/85 transition-colors hover:bg-[var(--color-forest)]/5 hover:text-[var(--color-terracotta)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-terracotta)] focus-visible:ring-offset-2"
                         aria-label="Admin"
                     >
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,7 +85,7 @@ onUnmounted(() => {
                         v-for="link in navLinks"
                         :key="link.label"
                         :href="link.to"
-                        class="block py-2 px-3 text-sm font-medium uppercase tracking-wider text-[var(--color-forest)] hover:bg-[var(--color-forest)]/5 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-terracotta)] focus-visible:ring-offset-2"
+                        class="block rounded-lg px-3 py-2 text-sm font-medium text-[var(--color-forest)] transition-colors hover:bg-[var(--color-forest)]/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-terracotta)] focus-visible:ring-offset-2"
                         @click="closeMobileMenu"
                     >
                         {{ link.label }}

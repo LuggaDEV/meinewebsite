@@ -52,11 +52,11 @@ onUnmounted(() => {
             <!-- Sidebar -->
             <aside
                 :class="[
-                    'fixed top-0 left-0 z-50 h-full w-72 transform bg-white shadow-xl transition-transform duration-200 ease-out lg:static lg:z-auto lg:translate-x-0 lg:shadow-none',
+                    'fixed top-0 left-0 z-50 h-full w-72 transform border-r border-[var(--color-forest)]/10 bg-white shadow-xl transition-transform duration-200 ease-out lg:static lg:z-auto lg:translate-x-0 lg:shadow-none',
                     sidebarOpen ? 'translate-x-0' : '-translate-x-full',
                 ]"
             >
-                <div class="flex h-full flex-col border-r border-[var(--color-forest)]/10">
+                <div class="flex h-full flex-col">
                     <div class="flex items-center justify-between border-b border-[var(--color-forest)]/10 px-5 py-4">
                         <span class="font-heading text-lg font-semibold text-[var(--color-forest)]">
                             Administration

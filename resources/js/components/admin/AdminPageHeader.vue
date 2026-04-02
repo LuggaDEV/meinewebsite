@@ -8,6 +8,9 @@ defineProps<{
 <template>
     <div class="mb-8 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <div class="min-w-0">
+            <p class="mb-1 text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-terracotta)]">
+                Admin
+            </p>
             <h1 class="font-heading text-2xl font-semibold tracking-tight text-[var(--color-forest)] sm:text-3xl">
                 {{ title }}
             </h1>
