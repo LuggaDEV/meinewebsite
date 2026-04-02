@@ -144,8 +144,11 @@ function clearAllFilters() {
 </script>
 
 <template>
-    <section id="recipes" class="py-16 md:py-24">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section
+        id="recipes"
+        class="border-t border-slate-200 bg-white py-16 md:py-24"
+    >
+        <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
             <Motion
                 :initial="{ opacity: 0, y: 20 }"
                 :in-view="{ opacity: 1, y: 0 }"
@@ -195,8 +198,9 @@ function clearAllFilters() {
                     Versuche es mit anderen Suchbegriffen oder Filtern.
                 </p>
                 <button
+                    type="button"
+                    class="rounded-lg border-2 border-slate-300 px-6 py-3 font-medium text-[var(--color-forest)] transition-colors hover:border-[var(--color-terracotta)] hover:bg-blue-50"
                     @click="clearAllFilters"
-                    class="px-6 py-3 text-[var(--color-forest)] font-medium rounded-lg border-2 border-[var(--color-forest)]/20 hover:border-[var(--color-terracotta)] hover:bg-[var(--color-terracotta)]/5 transition-colors"
                 >
                     Alle Filter zurücksetzen
                 </button>

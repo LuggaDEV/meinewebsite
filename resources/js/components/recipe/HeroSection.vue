@@ -6,7 +6,7 @@ import { Motion } from 'motion-v'
 <template>
     <section id="hero" class="relative overflow-hidden py-20 md:py-28 lg:py-36">
         <div
-            class="absolute inset-0 bg-gradient-to-br from-[var(--color-cream)] via-white to-[var(--color-terracotta)]/[0.07]"
+            class="absolute inset-0 bg-gradient-to-b from-white via-slate-50/80 to-white"
             aria-hidden="true"
         />
         <div

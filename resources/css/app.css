@@ -15,11 +15,11 @@
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
 
-    /* Semantic aliases: cream=page surface, forest=navy, terracotta=accent blue */
-    --color-cream: #f8fafc;
-    --color-terracotta: #2563eb;
+    /* Semantic aliases: cream=page surface (weiß), forest=navy, terracotta=Akzentblau */
+    --color-cream: #ffffff;
+    --color-terracotta: #1d4ed8;
     --color-forest: #0f172a;
-    --color-warm-gray: #64748b;
+    --color-warm-gray: #475569;
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -113,7 +113,7 @@ section {
 }
 
 :root {
-    --background: hsl(210 40% 99%);
+    --background: hsl(0 0% 100%);
     --foreground: hsl(222 47% 11%);
     --card: hsl(0 0% 100%);
     --card-foreground: hsl(222 47% 11%);
@@ -124,21 +124,21 @@ section {
     --secondary: hsl(214 32% 91%);
     --secondary-foreground: hsl(222 47% 11%);
     --muted: hsl(210 40% 96%);
-    --muted-foreground: hsl(215 16% 47%);
+    --muted-foreground: hsl(215 16% 40%);
     --accent: hsl(214 95% 93%);
     --accent-foreground: hsl(222 47% 11%);
     --destructive: hsl(0 84.2% 60.2%);
     --destructive-foreground: hsl(0 0% 98%);
-    --border: hsl(214 32% 91%);
-    --input: hsl(214 32% 91%);
-    --ring: hsl(217 91% 55%);
+    --border: hsl(214 20% 88%);
+    --input: hsl(214 20% 88%);
+    --ring: hsl(221 83% 48%);
     --chart-1: hsl(217 91% 55%);
     --chart-2: hsl(199 89% 48%);
     --chart-3: hsl(222 47% 35%);
     --chart-4: hsl(43 74% 66%);
     --chart-5: hsl(27 87% 67%);
     --radius: 0.625rem;
-    --sidebar-background: hsl(210 40% 98%);
+    --sidebar-background: hsl(0 0% 100%);
     --sidebar-foreground: hsl(222 47% 11%);
     --sidebar-primary: hsl(222 47% 11%);
     --sidebar-primary-foreground: hsl(210 40% 98%);

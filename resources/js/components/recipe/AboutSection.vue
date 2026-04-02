@@ -12,7 +12,7 @@ defineProps<{
 </script>
 
 <template>
-    <section id="about" class="border-t border-[var(--color-forest)]/[0.06] bg-white/80 py-16 md:py-24">
+    <section id="about" class="border-t border-slate-200 bg-slate-50 py-16 md:py-24">
         <Motion
             :initial="{ opacity: 0, y: 30 }"
             :in-view="{ opacity: 1, y: 0 }"

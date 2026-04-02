@@ -10,7 +10,7 @@ const socialLinks = [
 </script>
 
 <template>
-    <footer class="py-12 md:py-16 border-t border-[var(--color-forest)]/10 bg-[var(--color-forest)]/5">
+    <footer class="border-t border-slate-200 bg-slate-50 py-12 md:py-16">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row items-center justify-between gap-6">
                 <div class="flex flex-col md:flex-row items-center gap-4 md:gap-6">

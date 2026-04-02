@@ -44,7 +44,7 @@ function clearSearch() {
             v-model="localValue"
             type="text"
             placeholder="Suche nach Titel oder Beschreibung..."
-            class="pl-10 pr-10 bg-background dark:bg-input/30 border-input dark:border-input text-foreground placeholder:text-muted-foreground"
+            class="border-slate-200 bg-white pl-10 pr-10 text-foreground shadow-sm placeholder:text-muted-foreground dark:border-input dark:bg-input/30"
             aria-label="Rezeptsuche"
         />
         <button

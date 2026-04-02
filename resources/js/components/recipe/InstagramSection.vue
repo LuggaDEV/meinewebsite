@@ -29,7 +29,7 @@ function pauseAfterSeek(el: EventTarget | null): void {
 </script>
 
 <template>
-    <section id="instagram" class="border-t border-[var(--color-forest)]/[0.06] bg-gradient-to-b from-white to-[var(--color-cream)] py-16 md:py-24">
+    <section id="instagram" class="border-t border-slate-200 bg-white py-16 md:py-24">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <Motion
                 :initial="{ opacity: 0, y: 20 }"
