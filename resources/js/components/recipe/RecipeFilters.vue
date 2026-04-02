@@ -84,11 +84,24 @@ function clearFilters() {
         <DropdownMenuTrigger as-child>
             <Button
                 variant="outline"
-                class="gap-2 transition-all duration-200 hover:border-[var(--color-forest)] hover:bg-[var(--color-forest)]/5 dark:border-input dark:bg-input/30 dark:hover:border-border dark:hover:bg-accent dark:text-foreground"
-                :class="filterCount > 0 ? 'border-[var(--color-terracotta)] bg-[var(--color-terracotta)]/5 dark:border-[var(--color-terracotta)] dark:bg-[var(--color-terracotta)]/20' : ''"
+                class="gap-2 border-slate-200 bg-white text-slate-900 transition-all duration-200 hover:border-[var(--color-forest)] hover:bg-[var(--color-forest)]/5 dark:border-slate-200 dark:bg-white dark:text-slate-900 dark:hover:border-[var(--color-forest)] dark:hover:bg-slate-50"
+                :class="
+                    filterCount > 0
+                        ? 'border-[var(--color-terracotta)] bg-[var(--color-terracotta)]/5 dark:border-[var(--color-terracotta)] dark:bg-[var(--color-terracotta)]/10'
+                        : ''
+                "
             >
-                <Filter class="w-4 h-4" :class="filterCount > 0 ? 'text-[var(--color-terracotta)]' : 'dark:text-muted-foreground'" />
-                <span :class="filterCount > 0 ? 'font-semibold text-[var(--color-terracotta)]' : 'dark:text-foreground'">
+                <Filter
+                    class="h-4 w-4"
+                    :class="filterCount > 0 ? 'text-[var(--color-terracotta)]' : 'text-slate-500 dark:text-slate-500'"
+                />
+                <span
+                    :class="
+                        filterCount > 0
+                            ? 'font-semibold text-[var(--color-terracotta)]'
+                            : 'text-slate-900 dark:text-slate-900'
+                    "
+                >
                     {{ filterCount > 0 ? `Filter (${filterCount})` : 'Filter' }}
                 </span>
             </Button>
@@ -104,7 +117,7 @@ function clearFilters() {
         >
             <div class="space-y-3">
                 <div>
-                    <DropdownMenuLabel class="text-xs font-semibold text-[var(--color-forest)] dark:text-foreground uppercase tracking-wider px-2">
+                    <DropdownMenuLabel class="px-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-forest)] dark:text-slate-300">
                         Zubereitungszeit
                     </DropdownMenuLabel>
                     <DropdownMenuGroup class="mt-1">
@@ -130,7 +143,7 @@ function clearFilters() {
                 <DropdownMenuSeparator class="bg-[var(--color-forest)]/10 dark:bg-border" />
 
                 <div>
-                    <DropdownMenuLabel class="text-xs font-semibold text-[var(--color-forest)] dark:text-foreground uppercase tracking-wider px-2">
+                    <DropdownMenuLabel class="px-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-forest)] dark:text-slate-300">
                         Kochzeit
                     </DropdownMenuLabel>
                     <DropdownMenuGroup class="mt-1">
@@ -156,7 +169,7 @@ function clearFilters() {
                 <DropdownMenuSeparator class="bg-[var(--color-forest)]/10 dark:bg-border" />
 
                 <div>
-                    <DropdownMenuLabel class="text-xs font-semibold text-[var(--color-forest)] dark:text-foreground uppercase tracking-wider px-2">
+                    <DropdownMenuLabel class="px-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-forest)] dark:text-slate-300">
                         Portionen
                     </DropdownMenuLabel>
                     <DropdownMenuGroup class="mt-1">

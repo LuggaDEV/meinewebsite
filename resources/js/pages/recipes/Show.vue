@@ -267,7 +267,7 @@ function printRecipe(): void {
                         :transition="{ duration: 0.5, delay: 0.3 }"
                     >
                         <header class="mb-8">
-                            <h1 class="font-heading text-3xl md:text-4xl lg:text-5xl font-semibold text-[var(--color-forest)] mb-4">
+                            <h1 class="mb-4 font-heading text-3xl font-semibold text-slate-950 md:text-4xl lg:text-5xl dark:text-slate-950">
                                 {{ recipe.title }}
                             </h1>
                             <p class="text-lg text-[var(--color-warm-gray)] mb-6">

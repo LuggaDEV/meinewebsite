@@ -144,10 +144,7 @@ function clearAllFilters() {
 </script>
 
 <template>
-    <section
-        id="recipes"
-        class="border-t border-slate-200 bg-white py-16 md:py-24"
-    >
+    <section id="recipes" class="bg-white py-16 md:py-24">
         <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
             <Motion
                 :initial="{ opacity: 0, y: 20 }"
@@ -158,7 +155,7 @@ function clearAllFilters() {
                 <p class="mb-3 text-center text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-terracotta)]">
                     Entdecken
                 </p>
-                <h2 class="mb-12 text-center font-heading text-3xl font-semibold text-[var(--color-forest)] md:text-4xl dark:text-foreground">
+                <h2 class="mb-12 text-center font-heading text-3xl font-semibold text-slate-950 md:text-4xl dark:text-slate-950">
                     Rezepte
                 </h2>
             </Motion>
@@ -180,26 +177,26 @@ function clearAllFilters() {
                 />
 
                 <!-- Result Count -->
-                <div v-if="hasActiveFilters && filteredRecipes.length > 0" class="text-center text-sm text-[var(--color-warm-gray)] dark:text-muted-foreground">
+                <div v-if="hasActiveFilters && filteredRecipes.length > 0" class="text-center text-sm text-slate-600 dark:text-slate-600">
                     {{ filteredRecipes.length }} Rezept{{ filteredRecipes.length !== 1 ? 'e' : '' }} gefunden
                 </div>
             </div>
 
             <!-- Empty State: No recipes in database -->
-            <div v-if="recipes.length === 0" class="text-center text-[var(--color-warm-gray)]">
+            <div v-if="recipes.length === 0" class="text-center text-slate-600 dark:text-slate-600">
                 Noch keine Rezepte vorhanden.
             </div>
 
             <!-- Empty State: No search results -->
             <div v-else-if="filteredRecipes.length === 0" class="text-center py-12">
-                <Search class="w-16 h-16 mx-auto mb-4 text-[var(--color-warm-gray)]/30" />
-                <p class="text-lg font-medium text-[var(--color-forest)] mb-2">Keine Rezepte gefunden</p>
-                <p class="text-sm text-[var(--color-warm-gray)] mb-6">
+                <Search class="mx-auto mb-4 h-16 w-16 text-slate-300 dark:text-slate-300" />
+                <p class="mb-2 text-lg font-medium text-slate-950 dark:text-slate-950">Keine Rezepte gefunden</p>
+                <p class="mb-6 text-sm text-slate-600 dark:text-slate-600">
                     Versuche es mit anderen Suchbegriffen oder Filtern.
                 </p>
                 <button
                     type="button"
-                    class="rounded-lg border-2 border-slate-300 px-6 py-3 font-medium text-[var(--color-forest)] transition-colors hover:border-[var(--color-terracotta)] hover:bg-blue-50"
+                    class="rounded-lg border-2 border-slate-300 px-6 py-3 font-medium text-slate-950 transition-colors hover:border-[var(--color-terracotta)] hover:bg-blue-50 dark:text-slate-950"
                     @click="clearAllFilters"
                 >
                     Alle Filter zurücksetzen

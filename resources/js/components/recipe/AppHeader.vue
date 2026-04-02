@@ -34,7 +34,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <header class="sticky top-0 z-50 w-full border-b border-[var(--color-forest)]/10 bg-[var(--color-cream)]/90 backdrop-blur-md supports-[backdrop-filter]:bg-[var(--color-cream)]/80">
+    <header
+        class="sticky top-0 z-50 w-full border-b border-slate-200 bg-white shadow-sm"
+    >
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 md:h-20">
                 <Link href="/" class="font-heading text-xl md:text-2xl font-semibold text-[var(--color-forest)] hover:text-[var(--color-terracotta)] transition-colors" @click="closeMobileMenu">

@@ -4,15 +4,10 @@ import { Motion } from 'motion-v'
 </script>
 
 <template>
-    <section id="hero" class="relative overflow-hidden py-20 md:py-28 lg:py-36">
-        <div
-            class="absolute inset-0 bg-gradient-to-b from-white via-slate-50/80 to-white"
-            aria-hidden="true"
-        />
-        <div
-            class="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[var(--color-terracotta)]/[0.06] blur-3xl md:h-96 md:w-96"
-            aria-hidden="true"
-        />
+    <section
+        id="hero"
+        class="relative bg-white py-20 md:py-28 lg:py-36"
+    >
         <Motion
             :initial="{ opacity: 0, y: 20 }"
             :animate="{ opacity: 1, y: 0 }"

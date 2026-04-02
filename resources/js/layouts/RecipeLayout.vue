@@ -14,7 +14,7 @@ defineProps<{
         <div class="no-print">
             <AppHeader />
         </div>
-        <main class="flex-1">
+        <main class="flex-1 bg-white">
             <slot />
         </main>
         <div class="no-print">
