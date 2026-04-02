@@ -274,8 +274,9 @@ function submit(): void {
             // Wenn kein neues Bild ausgewählt wurde, Feld nicht senden (altes Bild bleibt)
             delete transformed.image
         }
-        return transformed
-    }).put(update.url(props.recipe.id), {
+        // POST + Method-Spoofing: PHP füllt bei echtem PUT mit multipart/form-data kein $_FILES
+        return { ...transformed, _method: 'PUT' }
+    }).post(update.url(props.recipe.id), {
         forceFormData: true,
         preserveScroll: true,
         onSuccess: () => {

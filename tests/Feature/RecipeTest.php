@@ -3,11 +3,14 @@
 use App\Models\Recipe;
 use App\Models\RecipeReview;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
+use function Pest\Laravel\post;
 
 test('guests can view recipes index', function (): void {
     Recipe::factory()->count(3)->create();
@@ -222,6 +225,33 @@ test('authenticated users can update a recipe', function (): void {
         'id' => $recipe->id,
         'title' => 'Aktualisiertes Rezept',
     ]);
+});
+
+test('authenticated users can replace recipe image via post with method spoofing', function (): void {
+    Storage::fake('public');
+    $user = User::factory()->create();
+    $oldPath = 'recipes/old.jpg';
+    Storage::disk('public')->put($oldPath, 'old-bytes');
+    $recipe = Recipe::factory()->create(['image' => $oldPath]);
+    $newFile = UploadedFile::fake()->image('new-recipe.jpg');
+
+    actingAs($user);
+    get(route('admin.recipes.edit', $recipe))->assertOk();
+
+    post(route('admin.recipes.update', $recipe), [
+        '_token' => session()->token(),
+        '_method' => 'PUT',
+        'title' => $recipe->title,
+        'description' => $recipe->description,
+        'ingredients' => $recipe->ingredients,
+        'instructions' => $recipe->instructions,
+        'image' => $newFile,
+    ])->assertRedirect('/admin/recipes');
+
+    $recipe->refresh();
+    expect($recipe->image)->not->toBe($oldPath);
+    Storage::disk('public')->assertMissing($oldPath);
+    Storage::disk('public')->assertExists($recipe->image);
 });
 
 test('authenticated users can delete a recipe', function (): void {
