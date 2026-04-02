@@ -395,6 +395,79 @@ test('authenticated user can trigger equipment price check from admin', function
         ->assertSessionHas('success');
 });
 
+test('equipment:check-prices uses JSON-LD Product offer when DOM price spans missing', function (): void {
+    $equipment = Equipment::factory()->create([
+        'link' => 'https://example.com/product-jsonld',
+        'price' => '99,00 €',
+        'original_price' => null,
+        'discount_percentage' => null,
+    ]);
+
+    $html = <<<'HTML'
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <script type="application/ld+json">
+        {"@context":"https://schema.org","@type":"Product","name":"Test","offers":{"@type":"Offer","price":"18.50","priceCurrency":"EUR"}}
+        </script>
+    </head>
+    <body></body>
+    </html>
+    HTML;
+
+    Http::fake([
+        'https://example.com/product-jsonld' => Http::response($html, 200),
+    ]);
+
+    $this->artisan('equipment:check-prices')->assertSuccessful();
+
+    $equipment->refresh();
+    expect($equipment->price)->toBe('18,50 €')
+        ->and($equipment->last_price_checked_at)->not->toBeNull();
+});
+
+test('cron equipment prices route returns 404 when token is not configured', function (): void {
+    config(['equipment.price_refresh_token' => null]);
+
+    get(route('cron.equipment-prices', ['token' => 'any-token']))
+        ->assertNotFound();
+});
+
+test('cron equipment prices route returns 404 for invalid token', function (): void {
+    config(['equipment.price_refresh_token' => 'expected-token']);
+
+    get(route('cron.equipment-prices', ['token' => 'wrong-token']))
+        ->assertNotFound();
+});
+
+test('cron equipment prices route runs price check with valid token', function (): void {
+    config(['equipment.price_refresh_token' => 'expected-token']);
+
+    Equipment::factory()->create([
+        'link' => 'https://www.amazon.de/dp/cron-test',
+        'price' => '1,00 €',
+    ]);
+
+    $html = <<<'HTML'
+    <!DOCTYPE html>
+    <html><body>
+        <span class="a-price-whole">42<span class="a-price-decimal">,</span></span>
+        <span class="a-price-fraction">00</span>
+    </body></html>
+    HTML;
+
+    Http::fake([
+        'https://www.amazon.de/dp/cron-test' => Http::response($html, 200),
+    ]);
+
+    get(route('cron.equipment-prices', ['token' => 'expected-token']))
+        ->assertSuccessful()
+        ->assertJson([
+            'checked' => 1,
+            'updated' => 1,
+        ]);
+});
+
 test('authenticated user can create equipment with image_url', function (): void {
     $user = User::factory()->create();
     $imageUrl = 'https://example.com/images/equipment.jpg';

@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\MaintenanceController as AdminMaintenanceControll
 use App\Http\Controllers\Admin\RecipeController as AdminRecipeController;
 use App\Http\Controllers\Admin\RecipeReviewController as AdminRecipeReviewController;
 use App\Http\Controllers\EquipmentController;
+use App\Http\Controllers\EquipmentPriceCronController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\RecipeExportController;
 use App\Http\Controllers\RecipeReviewController;
@@ -26,6 +27,9 @@ Route::middleware(['auth'])->group(function (): void {
 });
 
 Route::get('/equipment', [EquipmentController::class, 'index'])->name('equipment.index');
+
+Route::get('/internal/cron/equipment-prices/{token}', EquipmentPriceCronController::class)
+    ->name('cron.equipment-prices');
 
 Route::get('/impressum', function () {
     return Inertia::render('Impressum');

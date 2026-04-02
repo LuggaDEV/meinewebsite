@@ -2,8 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Equipment;
-use App\Services\EquipmentPriceService;
+use App\Services\EquipmentPriceCheckService;
 use Illuminate\Console\Command;
 
 class CheckEquipmentPrices extends Command
@@ -22,33 +21,11 @@ class CheckEquipmentPrices extends Command
      */
     protected $description = 'Fetch current prices from equipment product links and update discount display';
 
-    public function handle(EquipmentPriceService $priceService): int
+    public function handle(EquipmentPriceCheckService $checker): int
     {
-        $equipment = Equipment::query()->whereNotNull('link')->where('link', '!=', '')->get();
-        $updated = 0;
+        $stats = $checker->run();
 
-        foreach ($equipment as $item) {
-            $result = $priceService->getPriceAndDiscountFromUrl($item->link);
-            $newPriceStr = $result['price'];
-            $item->last_price_checked_at = now();
-
-            if ($newPriceStr === null) {
-                $item->discount_percentage = null;
-                $item->original_price = null;
-                $item->save();
-
-                continue;
-            }
-
-            $item->price = $newPriceStr;
-            $item->original_price = $result['original_price'] ?? null;
-            $item->discount_percentage = $result['discount_percentage'] ?? null;
-
-            $item->save();
-            $updated++;
-        }
-
-        $this->info("Checked {$equipment->count()} equipment items, updated {$updated} prices.");
+        $this->info("Checked {$stats['checked']} equipment items, updated {$stats['updated']} prices.");
 
         return self::SUCCESS;
     }
