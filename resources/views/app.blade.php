@@ -55,5 +55,14 @@
     </head>
     <body class="font-sans antialiased">
         @inertia
+
+        @if (! request()->is('admin', 'admin/*'))
+            <script
+                id="CookieDeclaration"
+                src="https://consent.cookiebot.com/ba02e5dd-8ce8-4bb5-a40a-800717273f88/cd.js"
+                type="text/javascript"
+                async
+            ></script>
+        @endif
     </body>
 </html>

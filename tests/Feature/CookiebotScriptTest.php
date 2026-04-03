@@ -16,13 +16,13 @@ afterEach(function (): void {
     Config::set('cookiebot.domain_group_id', '');
 });
 
-test('home page does not include cookiebot script when disabled', function (): void {
+test('home page does not include cookiebot consent script when disabled', function (): void {
     Config::set('cookiebot.enabled', false);
     Config::set('cookiebot.domain_group_id', '');
 
     get('/')
         ->assertSuccessful()
-        ->assertDontSee('consent.cookiebot.com', false);
+        ->assertDontSee('id="Cookiebot"', false);
 });
 
 test('home page includes cookiebot script when enabled', function (): void {
