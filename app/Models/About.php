@@ -25,5 +25,16 @@ class About extends Model
         'title',
         'content',
         'image',
+        'career_timeline',
     ];
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'career_timeline' => 'array',
+        ];
+    }
 }
