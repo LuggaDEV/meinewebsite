@@ -79,8 +79,8 @@ onUnmounted(() => {
                 </div>
             </aside>
 
-            <!-- Main content -->
-            <main class="flex-1 min-w-0">
+            <!-- Main content: explicit slate text so inputs stay readable in dark mode (bg-white cards inherit body foreground otherwise). -->
+            <main class="flex-1 min-w-0 text-slate-900">
                 <div class="py-8 md:py-12">
                     <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                         <!-- Mobile menu button -->
