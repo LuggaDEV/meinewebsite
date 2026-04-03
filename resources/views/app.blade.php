@@ -4,6 +4,16 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        @if (config('cookiebot.enabled') && filled(config('cookiebot.domain_group_id')) && ! request()->is('admin', 'admin/*'))
+            <script
+                id="Cookiebot"
+                src="https://consent.cookiebot.com/uc.js"
+                data-cbid="{{ config('cookiebot.domain_group_id') }}"
+                data-blockingmode="auto"
+                type="text/javascript"
+            ></script>
+        @endif
+
         {{-- Inline script to detect system dark mode preference and apply it immediately --}}
         <script>
             (function() {

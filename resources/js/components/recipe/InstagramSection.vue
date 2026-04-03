@@ -10,6 +10,8 @@ defineProps<{
 
 const PREVIEW_AT_SECONDS = 5
 
+const easeOutExpo = [0.22, 1, 0.36, 1] as const
+
 function useFifthSecondAsPreview(el: EventTarget | null): void {
     const video = el as HTMLVideoElement | null
     if (!video) return
@@ -32,9 +34,9 @@ function pauseAfterSeek(el: EventTarget | null): void {
     <section id="instagram" class="border-t border-slate-200 bg-white py-16 md:py-24">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <Motion
-                :initial="{ opacity: 0, y: 20 }"
+                :initial="{ opacity: 0, y: 18 }"
                 :in-view="{ opacity: 1, y: 0 }"
-                :transition="{ duration: 0.6, ease: 'easeOut' }"
+                :transition="{ duration: 0.58, ease: easeOutExpo }"
                 :viewport="{ once: true }"
             >
                 <p class="mb-3 text-center text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-terracotta)]">
@@ -54,9 +56,9 @@ function pauseAfterSeek(el: EventTarget | null): void {
                 <Motion
                     v-for="(post, i) in feed"
                     :key="post.id"
-                    :initial="{ opacity: 0, scale: 0.9 }"
+                    :initial="{ opacity: 0, scale: 0.94 }"
                     :in-view="{ opacity: 1, scale: 1 }"
-                    :transition="{ duration: 0.4, delay: i * 0.1, ease: 'easeOut' }"
+                    :transition="{ duration: 0.48, delay: i * 0.08, ease: easeOutExpo }"
                     :viewport="{ once: true, margin: '-50px' }"
                     class="w-[calc(50%-0.25rem)] sm:w-[calc(33.333%-0.67rem)] md:w-[calc(25%-0.75rem)] lg:w-[calc(16.666%-0.83rem)] max-w-[200px]"
                 >

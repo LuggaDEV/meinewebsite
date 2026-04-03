@@ -67,6 +67,13 @@ import RecipeLayout from '@/layouts/RecipeLayout.vue'
                                     <strong>Wofür nutzen wir Ihre Daten?</strong><br />
                                     Ein Teil der Daten wird erhoben, um eine fehlerfreie Bereitstellung der Website zu gewährleisten. Andere Daten können zur Analyse Ihres Nutzerverhaltens verwendet werden.
                                 </p>
+
+                                <h3 class="font-heading text-xl font-semibold text-[var(--color-forest)] mt-6 mb-3">
+                                    Cookies und Einwilligungen
+                                </h3>
+                                <p>
+                                    Diese Website kann Cookies und ähnliche Techniken einsetzen. Welche Cookies gesetzt werden und zu welchen Zwecken, können Sie dem Cookie-Hinweis-Banner entnehmen, der beim ersten Besuch erscheint. Ihre Einwilligung können Sie dort jederzeit ändern oder widerrufen; eine entsprechende Einstellmöglichkeit finden Sie auch im Cookie-Banner (Cookiebot).
+                                </p>
                             </section>
 
                             <section>

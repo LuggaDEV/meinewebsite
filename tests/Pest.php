@@ -11,8 +11,13 @@
 |
 */
 
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
+
 pest()->extend(Tests\TestCase::class)
     ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
+    ->beforeEach(function (): void {
+        $this->withoutMiddleware(ValidateCsrfToken::class);
+    })
     ->in('Feature');
 
 /*

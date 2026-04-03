@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import { Link } from '@inertiajs/vue3'
+import { MotionConfig } from 'motion-v'
 import AppHeader from '@/components/recipe/AppHeader.vue'
 import AppFooter from '@/components/recipe/AppFooter.vue'
 
@@ -10,17 +9,19 @@ defineProps<{
 </script>
 
 <template>
-    <div class="min-h-screen flex flex-col">
-        <div class="no-print">
-            <AppHeader />
+    <MotionConfig :reducedMotion="'user'">
+        <div class="flex min-h-screen flex-col">
+            <div class="no-print">
+                <AppHeader />
+            </div>
+            <main class="flex-1 bg-white">
+                <slot />
+            </main>
+            <div class="no-print">
+                <AppFooter />
+            </div>
         </div>
-        <main class="flex-1 bg-white">
-            <slot />
-        </main>
-        <div class="no-print">
-            <AppFooter />
-        </div>
-    </div>
+    </MotionConfig>
 </template>
 
 <style>
