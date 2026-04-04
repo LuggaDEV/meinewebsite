@@ -218,7 +218,7 @@ onMounted(() => {
                                 <p class="mb-6 text-[var(--color-warm-gray)] text-base leading-relaxed">
                                     Die folgende Übersicht wird von Cookiebot geladen und listet Cookies mit Zweck und Speicherdauer (Stand laut Cookiebot).
                                 </p>
-                                {{-- Heller Kasten: Cookiebot-Widget ist für helles UI optimiert; vermeidet „komisches“ Rendering im Dark-Theme --}}
+                                <!-- Heller Kasten: Cookiebot-Widget für helles UI; vermeidet falsches Rendering im Dark-Theme -->
                                 <div
                                     ref="cookieDeclarationMount"
                                     class="cookiebot-declaration not-prose max-w-none overflow-x-auto rounded-2xl border border-slate-200 bg-white p-4 text-slate-900 shadow-sm [color-scheme:light] md:p-6 [&_a]:text-blue-700 [&_a]:underline [&_table]:w-full [&_td]:border [&_td]:border-slate-200 [&_td]:p-2 [&_th]:border [&_th]:border-slate-200 [&_th]:p-2 [&_th]:text-left"
