@@ -24,11 +24,25 @@ Route::middleware(['auth'])->group(function (): void {
 });
 
 Route::get('/impressum', function () {
-    return Inertia::render('Impressum');
+    return Inertia::render('Impressum', [
+        'seo' => [
+            'title' => 'Impressum',
+            'description' => 'Impressum und rechtliche Angaben zu Luca Themann – Kochen.',
+            'url' => url('/impressum'),
+            'type' => 'website',
+        ],
+    ]);
 })->name('impressum');
 
 Route::get('/datenschutz', function () {
-    return Inertia::render('Datenschutz');
+    return Inertia::render('Datenschutz', [
+        'seo' => [
+            'title' => 'Datenschutz',
+            'description' => 'Datenschutzerklärung und Informationen zur Verarbeitung personenbezogener Daten.',
+            'url' => url('/datenschutz'),
+            'type' => 'website',
+        ],
+    ]);
 })->name('datenschutz');
 
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function (): void {

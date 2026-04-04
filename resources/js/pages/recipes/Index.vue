@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import SeoHead from '@/components/SeoHead.vue'
 import RecipeLayout from '@/layouts/RecipeLayout.vue'
 import HeroSection from '@/components/recipe/HeroSection.vue'
 import RecipesSection from '@/components/recipe/RecipesSection.vue'
@@ -7,6 +8,7 @@ import CareerTimelineSection from '@/components/recipe/CareerTimelineSection.vue
 import InstagramSection from '@/components/recipe/InstagramSection.vue'
 import type { Recipe } from '@/types/recipe'
 import type { InstagramPost } from '@/types/instagram'
+import type { SeoPageMeta } from '@/types'
 
 defineProps<{
     recipes: Recipe[]
@@ -23,10 +25,18 @@ defineProps<{
         }> | null
     } | null
     instagramFeed: InstagramPost[]
+    seo: SeoPageMeta
 }>()
 </script>
 
 <template>
+    <SeoHead
+        :title="seo.title"
+        :description="seo.description"
+        :image="seo.image"
+        :url="seo.url"
+        :type="seo.type"
+    />
     <RecipeLayout>
         <HeroSection />
         <RecipesSection :recipes="recipes" />

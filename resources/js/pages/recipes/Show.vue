@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { Link, router, useForm, usePage } from '@inertiajs/vue3'
 import { Motion } from 'motion-v'
+import SeoHead from '@/components/SeoHead.vue'
 import RecipeLayout from '@/layouts/RecipeLayout.vue'
 import { store as storeReview, update as updateReview, destroy as destroyReview } from '@/routes/recipes/reviews'
 import { computed, ref, onUnmounted, onBeforeUnmount } from 'vue'
 import type { RecipeReview } from '@/types/recipe'
+import type { SeoPageMeta } from '@/types'
 
 const page = usePage()
 
 const props = defineProps<{
+    seo: SeoPageMeta
     recipe: {
         id: number
         title: string
@@ -165,6 +168,13 @@ function printRecipe(): void {
 </script>
 
 <template>
+    <SeoHead
+        :title="seo.title"
+        :description="seo.description"
+        :image="seo.image"
+        :url="seo.url"
+        :type="seo.type"
+    />
     <RecipeLayout>
         <div class="py-12 md:py-16">
             <Motion

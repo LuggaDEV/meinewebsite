@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\About;
 use App\Models\Recipe;
 use App\Services\InstagramService;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -38,10 +39,28 @@ class RecipeController extends Controller
 
         $instagramFeed = $instagram->getMedia(12);
 
+        $defaultOgImage = asset(config('seo.default_image'));
+        $ogImage = $defaultOgImage;
+        if ($about && $about->image) {
+            $ogImage = $about->image;
+        } else {
+            $firstWithImage = $recipes->first(fn ($recipe) => filled($recipe->image));
+            if ($firstWithImage) {
+                $ogImage = $firstWithImage->image;
+            }
+        }
+
         return Inertia::render('recipes/Index', [
             'recipes' => $recipes,
             'about' => $about,
             'instagramFeed' => $instagramFeed,
+            'seo' => [
+                'title' => 'Startseite',
+                'description' => config('seo.default_description'),
+                'image' => $ogImage,
+                'url' => route('home'),
+                'type' => 'website',
+            ],
         ]);
     }
 
@@ -97,8 +116,17 @@ class RecipeController extends Controller
 
         unset($recipeData['reviews_avg_rating']);
 
+        $defaultOgImage = asset(config('seo.default_image'));
+
         return Inertia::render('recipes/Show', [
             'recipe' => $recipeData,
+            'seo' => [
+                'title' => $recipe->title,
+                'description' => Str::limit(strip_tags($recipe->description), 160),
+                'image' => $recipe->image ? $recipe->image : $defaultOgImage,
+                'url' => route('recipes.show', $recipe),
+                'type' => 'article',
+            ],
         ]);
     }
 }

@@ -1,10 +1,23 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3'
 import { Motion } from 'motion-v'
+import SeoHead from '@/components/SeoHead.vue'
 import RecipeLayout from '@/layouts/RecipeLayout.vue'
+import type { SeoPageMeta } from '@/types'
+
+defineProps<{
+    seo: SeoPageMeta
+}>()
 </script>
 
 <template>
+    <SeoHead
+        :title="seo.title"
+        :description="seo.description"
+        :image="seo.image"
+        :url="seo.url"
+        :type="seo.type"
+    />
     <RecipeLayout>
         <div class="py-12 md:py-16">
             <Motion

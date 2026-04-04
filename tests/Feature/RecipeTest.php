@@ -21,6 +21,10 @@ test('guests can view recipes index', function (): void {
             ->component('recipes/Index')
             ->has('recipes', 3)
             ->has('instagramFeed')
+            ->has('seoSite')
+            ->has('seo')
+            ->where('seo.title', 'Startseite')
+            ->where('seo.type', 'website')
         );
 });
 
@@ -113,6 +117,9 @@ test('guests can view a recipe', function (): void {
             ->component('recipes/Show')
             ->has('recipe')
             ->where('recipe.title', 'Test Rezept')
+            ->has('seo')
+            ->where('seo.title', 'Test Rezept')
+            ->where('seo.type', 'article')
         );
 });
 
