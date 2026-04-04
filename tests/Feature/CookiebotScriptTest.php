@@ -46,3 +46,9 @@ test('admin page does not include cookiebot script when enabled', function (): v
         ->assertSuccessful()
         ->assertDontSee('consent.cookiebot.com', false);
 });
+
+test('datenschutz page renders Datenschutz component', function (): void {
+    get(route('datenschutz'))
+        ->assertSuccessful()
+        ->assertInertia(fn ($page) => $page->component('Datenschutz'));
+});

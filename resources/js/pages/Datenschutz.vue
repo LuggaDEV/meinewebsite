@@ -187,6 +187,15 @@ defineProps<{
                                     Sie haben jederzeit das Recht, unentgeltlich Auskunft über Herkunft, Empfänger und Zweck Ihrer gespeicherten personenbezogenen Daten zu erhalten. Sie haben außerdem ein Recht, die Berichtigung oder Löschung dieser Daten zu verlangen. Wenn Sie eine Einwilligung zur Datenverarbeitung erteilt haben, können Sie diese Einwilligung jederzeit für die Zukunft widerrufen. Außerdem haben Sie das Recht, unter bestimmten Umständen die Einschränkung der Verarbeitung Ihrer personenbezogenen Daten zu verlangen. Des Weiteren steht Ihnen ein Beschwerderecht bei der zuständigen Aufsichtsbehörde zu.
                                 </p>
                             </section>
+
+                            <section class="mt-10 border-t border-slate-200 pt-10">
+                                <h2 class="font-heading text-2xl md:text-3xl font-semibold text-[var(--color-forest)] mb-4">
+                                    6. Cookie-Erklärung
+                                </h2>
+                                <p class="text-[var(--color-warm-gray)] text-base leading-relaxed">
+                                    Die detaillierte, tabellarische Übersicht der eingesetzten Cookies (Zweck, Speicherdauer) wird durch Cookiebot bereitgestellt und erscheint am Ende jeder Seite dieser Website.
+                                </p>
+                            </section>
                         </div>
                     </article>
                 </Motion>
