@@ -48,8 +48,8 @@
 
         <title inertia>Luca Themann - Kochen</title>
 
-        <link rel="icon" href="{{ asset(config('seo.favicon_ico')) }}" sizes="any">
-        <link rel="icon" href="{{ asset(config('seo.favicon_svg')) }}" type="image/svg+xml">
+        <link rel="icon" href="{{ asset(config('seo.favicon_png')) }}" type="image/png" sizes="32x32">
+        <link rel="icon" href="{{ asset(config('seo.favicon_png')) }}" type="image/png" sizes="any">
         <link rel="apple-touch-icon" href="{{ asset(config('seo.apple_touch_icon')) }}">
 
         <link rel="preconnect" href="https://fonts.googleapis.com">

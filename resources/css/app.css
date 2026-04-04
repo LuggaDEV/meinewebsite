@@ -195,3 +195,20 @@ section {
         font-family: var(--font-sans);
     }
 }
+
+/*
+  Cookiebot: Banner sitzt außerhalb von .no-print und würde sonst in der Druckvorschau
+  erscheinen (z. B. Rezept drucken). Alle Cybot-IDs siehe Cookiebot-Dokumentation.
+*/
+@media print {
+    #Cookiebot,
+    #CookieDeclaration,
+    iframe[src*='cookiebot.com'],
+    iframe[src*='consent.cookiebot.com'],
+    [id^='CybotCookiebot'],
+    [class*='CookiebotWidget'],
+    [class*='CybotCookiebot'] {
+        display: none !important;
+        visibility: hidden !important;
+    }
+}

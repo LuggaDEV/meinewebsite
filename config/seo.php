@@ -15,19 +15,17 @@ return [
     /*
     | Public paths (relative to the web root).
     */
-    'favicon_svg' => '/favicon.svg',
-
-    'favicon_ico' => '/favicon.ico',
+    'favicon_png' => '/favicon.png',
 
     /*
-    | Optional PNG for “Zum Home-Bildschirm” (ca. 180×180). Falls die Datei fehlt, kann sie ergänzt werden.
+    | Optional größeres PNG für „Zum Home-Bildschirm“ (z. B. 180×180).
     */
     'apple_touch_icon' => '/apple-touch-icon.png',
 
     /*
     | Fallback für Open Graph / Twitter, wenn kein seiten-spezifisches Bild gesetzt ist.
     */
-    'default_image' => '/favicon.svg',
+    'default_image' => '/favicon.png',
 
     'locale' => 'de_DE',
 
