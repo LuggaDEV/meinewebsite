@@ -1,13 +1,36 @@
 <script setup lang="ts">
+import { onMounted, ref } from 'vue'
 import { Link } from '@inertiajs/vue3'
 import { Motion } from 'motion-v'
 import SeoHead from '@/components/SeoHead.vue'
 import RecipeLayout from '@/layouts/RecipeLayout.vue'
 import type { SeoPageMeta } from '@/types'
 
+const COOKIE_DECLARATION_SRC =
+    'https://consent.cookiebot.com/ba02e5dd-8ce8-4bb5-a40a-800717273f88/cd.js'
+
 defineProps<{
     seo: SeoPageMeta
 }>()
+
+const cookieDeclarationMount = ref<HTMLElement | null>(null)
+
+onMounted(() => {
+    if (!cookieDeclarationMount.value) {
+        return
+    }
+
+    if (document.getElementById('CookieDeclaration')) {
+        return
+    }
+
+    const script = document.createElement('script')
+    script.id = 'CookieDeclaration'
+    script.src = COOKIE_DECLARATION_SRC
+    script.type = 'text/javascript'
+    script.async = true
+    cookieDeclarationMount.value.appendChild(script)
+})
 </script>
 
 <template>
@@ -192,9 +215,14 @@ defineProps<{
                                 <h2 class="font-heading text-2xl md:text-3xl font-semibold text-[var(--color-forest)] mb-4">
                                     6. Cookie-Erklärung
                                 </h2>
-                                <p class="text-[var(--color-warm-gray)] text-base leading-relaxed">
-                                    Die detaillierte, tabellarische Übersicht der eingesetzten Cookies (Zweck, Speicherdauer) wird durch Cookiebot bereitgestellt und erscheint am Ende jeder Seite dieser Website.
+                                <p class="mb-6 text-[var(--color-warm-gray)] text-base leading-relaxed">
+                                    Die folgende Übersicht wird von Cookiebot geladen und listet Cookies mit Zweck und Speicherdauer (Stand laut Cookiebot).
                                 </p>
+                                {{-- Heller Kasten: Cookiebot-Widget ist für helles UI optimiert; vermeidet „komisches“ Rendering im Dark-Theme --}}
+                                <div
+                                    ref="cookieDeclarationMount"
+                                    class="cookiebot-declaration not-prose max-w-none overflow-x-auto rounded-2xl border border-slate-200 bg-white p-4 text-slate-900 shadow-sm [color-scheme:light] md:p-6 [&_a]:text-blue-700 [&_a]:underline [&_table]:w-full [&_td]:border [&_td]:border-slate-200 [&_td]:p-2 [&_th]:border [&_th]:border-slate-200 [&_th]:p-2 [&_th]:text-left"
+                                />
                             </section>
                         </div>
                     </article>

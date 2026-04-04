@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'enabled' => filter_var(env('COOKIEBOT_ENABLED', false), FILTER_VALIDATE_BOOLEAN),
+    'enabled' => filter_var(env('COOKIEBOT_ENABLED', true), FILTER_VALIDATE_BOOLEAN),
 
     'domain_group_id' => env('COOKIEBOT_DOMAIN_GROUP_ID', ''),
 

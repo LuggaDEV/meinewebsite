@@ -4,11 +4,17 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        @if (config('cookiebot.enabled') && filled(config('cookiebot.domain_group_id')) && ! request()->is('admin', 'admin/*'))
+        @php
+            $cookiebotCbid = filled(config('cookiebot.domain_group_id'))
+                ? config('cookiebot.domain_group_id')
+                : 'ba02e5dd-8ce8-4bb5-a40a-800717273f88';
+        @endphp
+        @if (config('cookiebot.enabled') && ! request()->is('admin', 'admin/*'))
+            {{-- Consent-Banner (uc.js) – muss vor anderen Skripten im <head> stehen --}}
             <script
                 id="Cookiebot"
                 src="https://consent.cookiebot.com/uc.js"
-                data-cbid="{{ config('cookiebot.domain_group_id') }}"
+                data-cbid="{{ $cookiebotCbid }}"
                 data-blockingmode="auto"
                 type="text/javascript"
             ></script>
@@ -55,14 +61,5 @@
     </head>
     <body class="font-sans antialiased">
         @inertia
-
-        @if (! request()->is('admin', 'admin/*'))
-            <script
-                id="CookieDeclaration"
-                src="https://consent.cookiebot.com/ba02e5dd-8ce8-4bb5-a40a-800717273f88/cd.js"
-                type="text/javascript"
-                async
-            ></script>
-        @endif
     </body>
 </html>
