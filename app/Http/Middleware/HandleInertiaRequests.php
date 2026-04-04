@@ -43,6 +43,8 @@ class HandleInertiaRequests extends Middleware
                 'baseUrl' => rtrim((string) config('app.url'), '/'),
                 'description' => config('seo.default_description'),
                 'image' => asset(config('seo.default_image')),
+                'favicon' => asset(config('seo.favicon_svg')),
+                'faviconIco' => asset(config('seo.favicon_ico')),
                 'locale' => config('seo.locale'),
             ],
             'auth' => [

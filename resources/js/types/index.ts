@@ -9,6 +9,8 @@ export type SeoSite = {
     baseUrl: string;
     description: string;
     image: string;
+    favicon: string;
+    faviconIco: string;
     locale: string;
 };
 

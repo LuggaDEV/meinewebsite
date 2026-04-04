@@ -45,6 +45,11 @@ const fullTitle = computed(() =>
             <meta head-key="og:type" property="og:type" :content="type" />
             <meta head-key="og:url" property="og:url" :content="canonicalUrl" />
             <meta head-key="og:image" property="og:image" :content="imageUrl" />
+            <meta
+                head-key="og:image:alt"
+                property="og:image:alt"
+                :content="site.name"
+            />
             <meta head-key="og:locale" property="og:locale" :content="site.locale" />
             <meta head-key="og:site_name" property="og:site_name" :content="site.name" />
 
