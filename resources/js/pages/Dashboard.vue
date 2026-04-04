@@ -42,7 +42,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 <CardTitle class="text-base">Website</CardTitle>
                             </div>
                             <CardDescription>
-                                Öffentliche Startseite mit Rezepten ansehen.
+                                Öffentliche Startseite ansehen.
                             </CardDescription>
                         </CardHeader>
                     </Card>

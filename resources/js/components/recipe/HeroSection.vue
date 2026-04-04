@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3'
 import { Motion } from 'motion-v'
+import { index as recipesIndex } from '@/routes/recipes'
 
 const easeOutExpo = [0.22, 1, 0.36, 1] as const
 </script>
@@ -46,7 +47,7 @@ const easeOutExpo = [0.22, 1, 0.36, 1] as const
                     Rezepte und mehr
                 </p>
                 <Link
-                    href="/#recipes"
+                    :href="recipesIndex.url()"
                     class="mt-8 inline-flex items-center justify-center rounded-full bg-[var(--color-forest)] px-8 py-3 text-sm font-semibold text-white shadow-md transition-colors duration-300 hover:bg-[var(--color-terracotta)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-terracotta)] focus-visible:ring-offset-2"
                 >
                     Zu den Rezepten

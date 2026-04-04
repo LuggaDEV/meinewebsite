@@ -3,6 +3,7 @@ import { Link, router, useForm, usePage } from '@inertiajs/vue3'
 import { Motion } from 'motion-v'
 import SeoHead from '@/components/SeoHead.vue'
 import RecipeLayout from '@/layouts/RecipeLayout.vue'
+import { index as recipesIndex } from '@/routes/recipes'
 import { store as storeReview, update as updateReview, destroy as destroyReview } from '@/routes/recipes/reviews'
 import { computed, ref, onUnmounted, onBeforeUnmount } from 'vue'
 import type { RecipeReview } from '@/types/recipe'
@@ -190,7 +191,7 @@ function printRecipe(): void {
                     class="mb-8 flex flex-wrap items-center gap-4"
                 >
                     <Link
-                        href="/"
+                        :href="recipesIndex.url()"
                         class="no-print inline-flex items-center gap-2 text-[var(--color-forest)] hover:text-[var(--color-terracotta)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-terracotta)] focus-visible:ring-offset-2 rounded"
                     >
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

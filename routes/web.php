@@ -10,7 +10,9 @@ use App\Http\Controllers\RecipeReviewController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', [RecipeController::class, 'index'])->name('home');
+Route::get('/', [RecipeController::class, 'home'])->name('home');
+
+Route::get('/rezepte', [RecipeController::class, 'index'])->name('recipes.index');
 
 Route::get('/recipe/{recipe}', [RecipeController::class, 'show'])->name('recipes.show');
 

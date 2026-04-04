@@ -78,7 +78,7 @@ test('admin can save career timeline on about section', function (): void {
         ->and($about->career_timeline[0]['location'])->toBe('Sluis, NL');
 });
 
-test('recipes index includes career timeline on about when present', function (): void {
+test('home includes career timeline on about when present', function (): void {
     config(['services.instagram.access_token' => null]);
     Cache::forget('instagram_feed');
 
@@ -99,7 +99,7 @@ test('recipes index includes career timeline on about when present', function ()
     get('/')
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->component('recipes/Index')
+            ->component('Home')
             ->where('about.career_timeline.0.organization', 'Test Restaurant')
             ->where('about.career_timeline.0.role', 'Koch')
             ->where('about.career_timeline.0.period', '2020 – 2022'));

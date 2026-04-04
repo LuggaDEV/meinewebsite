@@ -6,7 +6,7 @@ const mobileMenuOpen = ref(false)
 
 const navLinks = [
     { label: 'Startseite', to: '/' },
-    { label: 'Rezepte', to: '/#recipes' },
+    { label: 'Rezepte', to: '/rezepte' },
     { label: 'Über mich', to: '/#about' },
 ]
 

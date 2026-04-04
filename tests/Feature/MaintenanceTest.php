@@ -14,7 +14,7 @@ beforeEach(function (): void {
 test('when maintenance is disabled guests see normal home page', function (): void {
     get('/')
         ->assertOk()
-        ->assertInertia(fn ($page) => $page->component('recipes/Index'));
+        ->assertInertia(fn ($page) => $page->component('Home'));
 });
 
 test('when maintenance is enabled guests see maintenance page', function (): void {
@@ -36,7 +36,7 @@ test('when maintenance is enabled authenticated user can access home', function 
     actingAs($user)
         ->get('/')
         ->assertOk()
-        ->assertInertia(fn ($page) => $page->component('recipes/Index'));
+        ->assertInertia(fn ($page) => $page->component('Home'));
 });
 
 test('when maintenance is enabled authenticated user can access admin maintenance', function (): void {

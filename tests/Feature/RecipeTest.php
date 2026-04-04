@@ -12,14 +12,11 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Pest\Laravel\post;
 
-test('guests can view recipes index', function (): void {
-    Recipe::factory()->count(3)->create();
-
+test('guests can view home page', function (): void {
     get('/')
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->component('recipes/Index')
-            ->has('recipes', 3)
+            ->component('Home')
             ->has('instagramFeed')
             ->has('seoSite')
             ->has('seo')
@@ -28,19 +25,33 @@ test('guests can view recipes index', function (): void {
         );
 });
 
-test('recipes index includes instagramFeed as empty array when not configured', function (): void {
+test('guests can view recipes index', function (): void {
+    Recipe::factory()->count(3)->create();
+
+    get('/rezepte')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('recipes/Index')
+            ->has('recipes', 3)
+            ->has('seo')
+            ->where('seo.title', 'Rezepte')
+            ->where('seo.type', 'website')
+        );
+});
+
+test('home includes instagramFeed as empty array when not configured', function (): void {
     config(['services.instagram.access_token' => null]);
     Cache::forget('instagram_feed');
 
     get('/')
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->component('recipes/Index')
+            ->component('Home')
             ->has('instagramFeed', 0)
         );
 });
 
-test('recipes index includes instagramFeed from Graph API when configured', function (): void {
+test('home includes instagramFeed from Graph API when configured', function (): void {
     config(['services.instagram.access_token' => 'fake-token']);
     Cache::forget('instagram_feed');
 
@@ -61,7 +72,7 @@ test('recipes index includes instagramFeed from Graph API when configured', func
     get('/')
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->component('recipes/Index')
+            ->component('Home')
             ->has('instagramFeed', 1)
             ->where('instagramFeed.0.id', 'media-1')
             ->where('instagramFeed.0.media_url', 'https://example.com/img1.jpg')
@@ -71,7 +82,7 @@ test('recipes index includes instagramFeed from Graph API when configured', func
         );
 });
 
-test('recipes index returns empty instagramFeed when Graph API fails', function (): void {
+test('home returns empty instagramFeed when Graph API fails', function (): void {
     config(['services.instagram.access_token' => 'fake-token']);
     Cache::forget('instagram_feed');
 
@@ -82,7 +93,7 @@ test('recipes index returns empty instagramFeed when Graph API fails', function 
     get('/')
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->component('recipes/Index')
+            ->component('Home')
             ->has('instagramFeed', 0)
         );
 });
@@ -96,7 +107,7 @@ test('recipes index includes average_rating and reviews_count', function (): voi
         'rating' => 5,
     ]);
 
-    get('/')
+    get('/rezepte')
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->has('recipes')

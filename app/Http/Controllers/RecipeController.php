@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\About;
 use App\Models\Recipe;
 use App\Services\InstagramService;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -12,32 +13,47 @@ use Inertia\Response;
 class RecipeController extends Controller
 {
     /**
-     * Display a listing of recipes.
+     * Display the public home page (without recipe listing).
      */
-    public function index(InstagramService $instagram): Response
+    public function home(InstagramService $instagram): Response
     {
-        $recipes = Recipe::query()
-            ->withCount('reviews')
-            ->withAvg('reviews', 'rating')
-            ->latest()
-            ->get()
-            ->map(function ($recipe) {
-                if ($recipe->image && ! str_starts_with($recipe->image, 'http')) {
-                    $recipe->image = asset('storage/'.$recipe->image);
-                }
-                $recipe->average_rating = round((float) ($recipe->reviews_avg_rating ?? 0), 1);
-                $recipe->reviews_count = $recipe->reviews_count;
-                $recipe->makeHidden('reviews_avg_rating');
-
-                return $recipe;
-            });
-
         $about = About::first();
         if ($about && $about->image && ! str_starts_with($about->image, 'http')) {
             $about->image = asset('storage/'.$about->image);
         }
 
         $instagramFeed = $instagram->getMedia(12);
+
+        $defaultOgImage = asset(config('seo.default_image'));
+        $ogImage = $defaultOgImage;
+        if ($about && $about->image) {
+            $ogImage = $about->image;
+        }
+
+        return Inertia::render('Home', [
+            'about' => $about,
+            'instagramFeed' => $instagramFeed,
+            'seo' => [
+                'title' => 'Startseite',
+                'description' => config('seo.default_description'),
+                'image' => $ogImage,
+                'url' => route('home'),
+                'type' => 'website',
+            ],
+        ]);
+    }
+
+    /**
+     * Display the recipe listing.
+     */
+    public function index(): Response
+    {
+        $recipes = $this->recipesForListing();
+
+        $about = About::first();
+        if ($about && $about->image && ! str_starts_with($about->image, 'http')) {
+            $about->image = asset('storage/'.$about->image);
+        }
 
         $defaultOgImage = asset(config('seo.default_image'));
         $ogImage = $defaultOgImage;
@@ -52,16 +68,36 @@ class RecipeController extends Controller
 
         return Inertia::render('recipes/Index', [
             'recipes' => $recipes,
-            'about' => $about,
-            'instagramFeed' => $instagramFeed,
             'seo' => [
-                'title' => 'Startseite',
+                'title' => 'Rezepte',
                 'description' => config('seo.default_description'),
                 'image' => $ogImage,
-                'url' => route('home'),
+                'url' => route('recipes.index'),
                 'type' => 'website',
             ],
         ]);
+    }
+
+    /**
+     * @return Collection<int, Recipe>
+     */
+    private function recipesForListing(): Collection
+    {
+        return Recipe::query()
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating')
+            ->latest()
+            ->get()
+            ->map(function ($recipe) {
+                if ($recipe->image && ! str_starts_with($recipe->image, 'http')) {
+                    $recipe->image = asset('storage/'.$recipe->image);
+                }
+                $recipe->average_rating = round((float) ($recipe->reviews_avg_rating ?? 0), 1);
+                $recipe->reviews_count = $recipe->reviews_count;
+                $recipe->makeHidden('reviews_avg_rating');
+
+                return $recipe;
+            });
     }
 
     /**
